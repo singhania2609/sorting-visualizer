@@ -1,37 +1,87 @@
 class PathfindingVisualizer {
     constructor() {
         this.cities = [
-            { name: "New York", lat: 40.7128, lon: -74.0060, population: 8336817 },
-            { name: "Los Angeles", lat: 34.0522, lon: -118.2437, population: 3979576 },
-            { name: "Chicago", lat: 41.8781, lon: -87.6298, population: 2693976 },
-            { name: "Houston", lat: 29.7604, lon: -95.3698, population: 2320268 },
-            { name: "Phoenix", lat: 33.4484, lon: -112.0740, population: 1680992 },
-            { name: "Philadelphia", lat: 39.9526, lon: -75.1652, population: 1603797 },
-            { name: "San Antonio", lat: 29.4241, lon: -98.4936, population: 1547253 },
-            { name: "San Diego", lat: 32.7157, lon: -117.1611, population: 1423851 },
-            { name: "Dallas", lat: 32.7767, lon: -96.7970, population: 1343573 },
-            { name: "San Jose", lat: 37.3382, lon: -121.8863, population: 1030119 }
+            { name: "Mumbai", lat: 19.0760, lon: 72.8777, population: 20411274 },
+            { name: "Delhi", lat: 28.7041, lon: 77.1025, population: 16787941 },
+            { name: "Bangalore", lat: 12.9716, lon: 77.5946, population: 12479914 },
+            { name: "Hyderabad", lat: 17.3850, lon: 78.4867, population: 10469000 },
+            { name: "Chennai", lat: 13.0827, lon: 80.2707, population: 7088000 },
+            { name: "Kolkata", lat: 22.5726, lon: 88.3639, population: 14916388 },
+            { name: "Pune", lat: 18.5204, lon: 73.8567, population: 3124458 },
+            { name: "Ahmedabad", lat: 23.0225, lon: 72.5714, population: 5570585 },
+            { name: "Jaipur", lat: 26.9124, lon: 75.7873, population: 3073350 },
+            { name: "Surat", lat: 21.1702, lon: 72.8311, population: 4467797 },
+            { name: "Lucknow", lat: 26.8467, lon: 80.9462, population: 3382000 },
+            { name: "Kanpur", lat: 26.4499, lon: 80.3319, population: 2767031 },
+            { name: "Nagpur", lat: 21.1458, lon: 79.0882, population: 2405665 },
+            { name: "Indore", lat: 22.7196, lon: 75.8577, population: 1994397 },
+            { name: "Thane", lat: 19.2183, lon: 72.9781, population: 1841488 },
+            { name: "Bhopal", lat: 23.2599, lon: 77.4126, population: 1798218 },
+            { name: "Visakhapatnam", lat: 17.6868, lon: 83.2185, population: 1728128 },
+            { name: "Patna", lat: 25.5941, lon: 85.1376, population: 2046652 },
+            { name: "Vadodara", lat: 22.3072, lon: 73.1812, population: 1670806 },
+            { name: "Ghaziabad", lat: 28.6692, lon: 77.4538, population: 1648643 }
         ];
         
         this.routes = [
-            { from: "New York", to: "Los Angeles", distance: 3935, time: 6.5, transport: "air" },
-            { from: "New York", to: "Chicago", distance: 1147, time: 2.5, transport: "air" },
-            { from: "New York", to: "Houston", distance: 2271, time: 4.0, transport: "air" },
-            { from: "Los Angeles", to: "Chicago", distance: 2788, time: 4.5, transport: "air" },
-            { from: "Los Angeles", to: "Houston", distance: 2197, time: 4.0, transport: "air" },
-            { from: "Chicago", to: "Houston", distance: 1124, time: 2.0, transport: "air" },
-            { from: "Chicago", to: "Phoenix", distance: 1759, time: 3.5, transport: "air" },
-            { from: "Houston", to: "Phoenix", distance: 1187, time: 2.5, transport: "air" },
-            { from: "Phoenix", to: "San Diego", distance: 572, time: 1.0, transport: "air" },
-            { from: "San Diego", to: "Los Angeles", distance: 120, time: 0.5, transport: "road" },
-            { from: "Dallas", to: "Houston", distance: 362, time: 0.8, transport: "road" },
-            { from: "Dallas", to: "San Antonio", distance: 274, time: 0.6, transport: "road" },
-            { from: "San Jose", to: "San Francisco", distance: 77, time: 0.3, transport: "road" },
-            { name: "Philadelphia", to: "New York", distance: 97, time: 0.3, transport: "road" }
+            // Major air routes
+            { from: "Mumbai", to: "Delhi", distance: 1154, time: 2.0, transport: "air" },
+            { from: "Mumbai", to: "Bangalore", distance: 983, time: 1.8, transport: "air" },
+            { from: "Mumbai", to: "Hyderabad", distance: 707, time: 1.5, transport: "air" },
+            { from: "Mumbai", to: "Chennai", distance: 1038, time: 1.9, transport: "air" },
+            { from: "Mumbai", to: "Kolkata", distance: 1654, time: 2.5, transport: "air" },
+            { from: "Delhi", to: "Bangalore", distance: 1740, time: 2.8, transport: "air" },
+            { from: "Delhi", to: "Hyderabad", distance: 1215, time: 2.2, transport: "air" },
+            { from: "Delhi", to: "Chennai", distance: 1760, time: 2.9, transport: "air" },
+            { from: "Delhi", to: "Kolkata", distance: 1304, time: 2.1, transport: "air" },
+            { from: "Delhi", to: "Jaipur", distance: 268, time: 0.8, transport: "road" },
+            { from: "Delhi", to: "Lucknow", distance: 497, time: 1.2, transport: "road" },
+            { from: "Delhi", to: "Kanpur", distance: 432, time: 1.0, transport: "road" },
+            { from: "Delhi", to: "Bhopal", distance: 588, time: 1.4, transport: "road" },
+            { from: "Delhi", to: "Patna", distance: 847, time: 1.8, transport: "road" },
+            { from: "Delhi", to: "Ghaziabad", distance: 19, time: 0.5, transport: "road" },
+            { from: "Bangalore", to: "Hyderabad", distance: 569, time: 1.2, transport: "air" },
+            { from: "Bangalore", to: "Chennai", distance: 347, time: 0.8, transport: "road" },
+            { from: "Bangalore", to: "Pune", distance: 619, time: 1.3, transport: "air" },
+            { from: "Hyderabad", to: "Chennai", distance: 626, time: 1.1, transport: "air" },
+            { from: "Hyderabad", to: "Visakhapatnam", distance: 671, time: 1.3, transport: "air" },
+            { from: "Chennai", to: "Kolkata", distance: 1359, time: 2.3, transport: "air" },
+            { from: "Chennai", to: "Visakhapatnam", distance: 800, time: 1.5, transport: "air" },
+            { from: "Kolkata", to: "Patna", distance: 532, time: 1.1, transport: "road" },
+            { from: "Kolkata", to: "Visakhapatnam", distance: 883, time: 1.7, transport: "air" },
+            { from: "Pune", to: "Mumbai", distance: 148, time: 0.5, transport: "road" },
+            { from: "Pune", to: "Ahmedabad", distance: 655, time: 1.4, transport: "air" },
+            { from: "Ahmedabad", to: "Mumbai", distance: 523, time: 1.1, transport: "air" },
+            { from: "Ahmedabad", to: "Surat", distance: 263, time: 0.6, transport: "road" },
+            { from: "Ahmedabad", to: "Vadodara", distance: 110, time: 0.3, transport: "road" },
+            { from: "Jaipur", to: "Ahmedabad", distance: 650, time: 1.3, transport: "road" },
+            { from: "Jaipur", to: "Bhopal", distance: 598, time: 1.2, transport: "road" },
+            { from: "Surat", to: "Mumbai", distance: 260, time: 0.6, transport: "road" },
+            { from: "Surat", to: "Vadodara", distance: 153, time: 0.4, transport: "road" },
+            { from: "Lucknow", to: "Kanpur", distance: 79, time: 0.3, transport: "road" },
+            { from: "Lucknow", to: "Patna", distance: 350, time: 0.8, transport: "road" },
+            { from: "Kanpur", to: "Bhopal", distance: 156, time: 0.4, transport: "road" },
+            { from: "Nagpur", to: "Bhopal", distance: 245, time: 0.6, transport: "road" },
+            { from: "Nagpur", to: "Hyderabad", distance: 500, time: 1.0, transport: "road" },
+            { from: "Indore", to: "Bhopal", distance: 186, time: 0.4, transport: "road" },
+            { from: "Indore", to: "Mumbai", distance: 585, time: 1.2, transport: "road" },
+            { from: "Thane", to: "Mumbai", distance: 25, time: 0.1, transport: "road" },
+            { from: "Thane", to: "Pune", distance: 123, time: 0.3, transport: "road" },
+            { from: "Bhopal", to: "Indore", distance: 186, time: 0.4, transport: "road" },
+            { from: "Bhopal", to: "Nagpur", distance: 245, time: 0.6, transport: "road" },
+            { from: "Visakhapatnam", to: "Hyderabad", distance: 671, time: 1.3, transport: "air" },
+            { from: "Visakhapatnam", to: "Chennai", distance: 800, time: 1.5, transport: "air" },
+            { from: "Patna", to: "Kolkata", distance: 532, time: 1.1, transport: "road" },
+            { from: "Patna", to: "Lucknow", distance: 350, time: 0.8, transport: "road" },
+            { from: "Vadodara", to: "Ahmedabad", distance: 110, time: 0.3, transport: "road" },
+            { from: "Vadodara", to: "Surat", distance: 153, time: 0.4, transport: "road" },
+            { from: "Ghaziabad", to: "Delhi", distance: 19, time: 0.5, transport: "road" },
+            { from: "Ghaziabad", to: "Lucknow", distance: 478, time: 1.1, transport: "road" }
         ];
         
         this.currentPath = null;
         this.comparisonResults = null;
+        this.person = null; // Person character for path animation
         
         this.initializeEventListeners();
         this.populateCitySelects();
@@ -115,6 +165,164 @@ class PathfindingVisualizer {
                 container.appendChild(routeLine);
             }
         });
+        
+        // Create person character
+        this.createPerson();
+    }
+    
+    // Create the person character
+    createPerson() {
+        const container = document.getElementById('mapContainer');
+        
+        this.person = document.createElement('div');
+        this.person.className = 'person-character';
+        this.person.innerHTML = '👤';
+        this.person.style.position = 'absolute';
+        this.person.style.fontSize = '20px';
+        this.person.style.zIndex = '1000';
+        this.person.style.transition = 'all 0.5s ease-in-out';
+        this.person.style.display = 'none';
+        this.person.style.cursor = 'pointer';
+        this.person.title = 'Click for journey details';
+        
+        // Add click event for person details
+        this.person.addEventListener('click', () => this.showPersonDetails());
+        
+        container.appendChild(this.person);
+    }
+    
+    // Show detailed information about the person's journey
+    showPersonDetails() {
+        if (!this.currentPath) return;
+        
+        const details = `
+            🧭 Journey Details:
+            
+            🚀 Algorithm: ${this.currentPath.algorithm}
+            📍 Total Cities: ${this.currentPath.path.length}
+            🛣️ Total Distance: ${this.currentPath.totalDistance.toFixed(1)} km
+            ⏱️ Total Time: ${this.currentPath.totalTime.toFixed(1)} hours
+            
+            🛤️ Route: ${this.currentPath.path.join(' → ')}
+            
+            💡 Click OK to continue watching the journey!
+        `;
+        
+        alert(details);
+    }
+    
+    // Get city position on map
+    getCityPosition(cityName) {
+        const bounds = this.calculateMapBounds();
+        const container = document.getElementById('mapContainer');
+        const mapWidth = container.offsetWidth;
+        const mapHeight = container.offsetHeight;
+        const padding = 40;
+        
+        const city = this.cities.find(c => c.name === cityName);
+        if (!city) return null;
+        
+        const x = ((city.lon - bounds.minLon) / (bounds.maxLon - bounds.minLon)) * (mapWidth - 2 * padding) + padding;
+        const y = ((bounds.maxLat - city.lat) / (bounds.maxLat - bounds.minLat)) * (mapHeight - 2 * padding) + padding;
+        
+        return { x, y };
+    }
+    
+    // Animate person moving along the path
+    animatePersonAlongPath() {
+        if (!this.currentPath || !this.person) return;
+        
+        this.person.style.display = 'block';
+        
+        // Start from source city
+        const sourcePos = this.getCityPosition(this.currentPath.path[0]);
+        if (sourcePos) {
+            this.person.style.left = (sourcePos.x - 10) + 'px';
+            this.person.style.top = (sourcePos.y - 10) + 'px';
+        }
+        
+        // Show progress info
+        this.showPersonProgress(0);
+        
+        // Animate through each city in the path
+        this.animatePersonStep(0);
+    }
+    
+    // Show person's current progress
+    showPersonProgress(stepIndex) {
+        const progressContainer = document.getElementById('personProgress');
+        if (!progressContainer) {
+            // Create progress container if it doesn't exist
+            const infoPanel = document.querySelector('.info-panel');
+            const progressDiv = document.createElement('div');
+            progressDiv.className = 'info-card';
+            progressDiv.id = 'personProgress';
+            progressDiv.innerHTML = `
+                <h3>👤 Current Location</h3>
+                <div class="value" id="personLocation">-</div>
+            `;
+            infoPanel.appendChild(progressDiv);
+        }
+        
+        if (stepIndex < this.currentPath.path.length) {
+            const currentCity = this.currentPath.path[stepIndex];
+            const progress = Math.round(((stepIndex + 1) / this.currentPath.path.length) * 100);
+            document.getElementById('personLocation').textContent = `${currentCity} (${progress}% complete)`;
+        }
+    }
+    
+    // Animate person moving to next city
+    animatePersonStep(stepIndex) {
+        if (stepIndex >= this.currentPath.path.length - 1) {
+            // Reached destination
+            this.showPersonProgress(this.currentPath.path.length - 1);
+            setTimeout(() => {
+                this.person.style.display = 'none';
+                // Show completion message
+                document.getElementById('personLocation').textContent = '🎉 Destination reached!';
+            }, 1000);
+            return;
+        }
+        
+        const currentCity = this.currentPath.path[stepIndex];
+        const nextCity = this.currentPath.path[stepIndex + 1];
+        const route = this.currentPath.routeDetails[stepIndex];
+        
+        const currentPos = this.getCityPosition(currentCity);
+        const nextPos = this.getCityPosition(nextCity);
+        
+        if (currentPos && nextPos) {
+            // Update progress
+            this.showPersonProgress(stepIndex);
+            
+            // Show transport mode
+            this.showTransportMode(route.transport);
+            
+            // Calculate movement duration based on transport mode
+            const moveDuration = route.transport === 'air' ? 300 : 600; // Air is faster
+            
+            // Move person to next city
+            setTimeout(() => {
+                this.person.style.left = (nextPos.x - 10) + 'px';
+                this.person.style.top = (nextPos.y - 10) + 'px';
+                
+                // Continue to next step
+                setTimeout(() => {
+                    this.animatePersonStep(stepIndex + 1);
+                }, moveDuration + 200);
+            }, 500);
+        }
+    }
+    
+    // Show transport mode information
+    showTransportMode(transport) {
+        const progressContainer = document.getElementById('personProgress');
+        if (progressContainer) {
+            const transportIcon = transport === 'air' ? '✈️' : '🚗';
+            const currentText = document.getElementById('personLocation').textContent;
+            const cityName = currentText.split(' ')[0];
+            document.getElementById('personLocation').textContent = `${cityName} → ${transportIcon} ${transport}`;
+        }
     }
     
     calculateMapBounds() {
@@ -146,61 +354,265 @@ class PathfindingVisualizer {
         
         this.updateStatus('Finding path...');
         
-        // Simulate pathfinding (in a real implementation, this would call the backend)
+        // Use the selected algorithm to find the path
         setTimeout(() => {
-            this.currentPath = this.simulatePathfinding(source, destination, algorithm);
-            this.displayPath();
-            this.updateStatus('Path found');
+            let result;
+            switch (algorithm) {
+                case 'dijkstra':
+                    result = this.dijkstra(source, destination);
+                    break;
+                case 'bfs':
+                    result = this.bfs(source, destination);
+                    break;
+                case 'a-star':
+                    result = this.aStar(source, destination);
+                    break;
+                default:
+                    result = this.dijkstra(source, destination);
+            }
+            
+            if (result) {
+                this.currentPath = result;
+                this.displayPath();
+                this.updateStatus('Path found');
+            } else {
+                this.updateStatus('No path found');
+                alert('No path found between the selected cities. Please try different cities.');
+            }
         }, 1000);
     }
     
-    simulatePathfinding(source, destination, algorithm) {
-        // Simple pathfinding simulation
-        const path = [source];
-        let current = source;
-        let totalDistance = 0;
-        let totalTime = 0;
-        const routeDetails = [];
+    // Dijkstra's Algorithm
+    dijkstra(source, destination) {
+        const distances = {};
+        const previous = {};
+        const unvisited = new Set();
+        const graph = this.buildGraph();
         
-        while (current !== destination) {
-            // Find a route from current city to destination or intermediate city
-            const possibleRoutes = this.routes.filter(r => r.from === current);
+        // Initialize distances
+        this.cities.forEach(city => {
+            distances[city.name] = Infinity;
+            unvisited.add(city.name);
+        });
+        distances[source] = 0;
+        
+        while (unvisited.size > 0) {
+            // Find unvisited city with minimum distance
+            let current = null;
+            let minDistance = Infinity;
             
-            if (possibleRoutes.length === 0) {
-                // No direct route, find intermediate city
-                const intermediate = this.findIntermediateCity(current, destination);
-                if (intermediate && intermediate !== current) {
-                    const route = this.routes.find(r => r.from === current && r.to === intermediate);
-                    if (route) {
-                        path.push(intermediate);
-                        totalDistance += route.distance;
-                        totalTime += route.time;
-                        routeDetails.push(route);
-                        current = intermediate;
-                        continue;
+            for (const city of unvisited) {
+                if (distances[city] < minDistance) {
+                    minDistance = distances[city];
+                    current = city;
+                }
+            }
+            
+            if (current === null || current === destination) break;
+            
+            unvisited.delete(current);
+            
+            // Update distances to neighbors
+            if (graph[current]) {
+                for (const neighbor in graph[current]) {
+                    if (unvisited.has(neighbor)) {
+                        const newDistance = distances[current] + graph[current][neighbor].distance;
+                        if (newDistance < distances[neighbor]) {
+                            distances[neighbor] = newDistance;
+                            previous[neighbor] = current;
+                        }
                     }
                 }
-                break;
-            }
-            
-            // Try to find direct route to destination
-            const directRoute = possibleRoutes.find(r => r.to === destination);
-            if (directRoute) {
-                path.push(destination);
-                totalDistance += directRoute.distance;
-                totalTime += directRoute.time;
-                routeDetails.push(directRoute);
-                current = destination;
-            } else {
-                // Take first available route
-                const route = possibleRoutes[0];
-                path.push(route.to);
-                totalDistance += route.distance;
-                totalTime += route.time;
-                routeDetails.push(route);
-                current = route.to;
             }
         }
+        
+        return this.reconstructPath(source, destination, previous, distances, 'dijkstra');
+    }
+    
+    // Breadth-First Search
+    bfs(source, destination) {
+        const queue = [{ city: source, path: [source], distance: 0, time: 0 }];
+        const visited = new Set();
+        const graph = this.buildGraph();
+        
+        while (queue.length > 0) {
+            const { city, path, distance, time } = queue.shift();
+            
+            if (city === destination) {
+                return {
+                    path: path,
+                    totalDistance: distance,
+                    totalTime: time,
+                    routeDetails: this.getRouteDetails(path),
+                    algorithm: 'bfs'
+                };
+            }
+            
+            if (visited.has(city)) continue;
+            visited.add(city);
+            
+            if (graph[city]) {
+                for (const neighbor in graph[city]) {
+                    if (!visited.has(neighbor)) {
+                        const route = graph[city][neighbor];
+                        queue.push({
+                            city: neighbor,
+                            path: [...path, neighbor],
+                            distance: distance + route.distance,
+                            time: time + route.time
+                        });
+                    }
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    // A* Algorithm
+    aStar(source, destination) {
+        const openSet = [{ city: source, f: 0, g: 0, h: 0, path: [source], distance: 0, time: 0 }];
+        const closedSet = new Set();
+        const cameFrom = {};
+        const gScore = {};
+        const fScore = {};
+        const graph = this.buildGraph();
+        
+        // Initialize scores
+        this.cities.forEach(city => {
+            gScore[city.name] = Infinity;
+            fScore[city.name] = Infinity;
+        });
+        gScore[source] = 0;
+        fScore[source] = this.heuristic(source, destination);
+        
+        while (openSet.length > 0) {
+            // Find city with lowest f score
+            openSet.sort((a, b) => a.f - b.f);
+            const current = openSet.shift();
+            
+            if (current.city === destination) {
+                return {
+                    path: current.path,
+                    totalDistance: current.distance,
+                    totalTime: current.time,
+                    routeDetails: this.getRouteDetails(current.path),
+                    algorithm: 'a-star'
+                };
+            }
+            
+            closedSet.add(current.city);
+            
+            if (graph[current.city]) {
+                for (const neighbor in graph[current.city]) {
+                    if (closedSet.has(neighbor)) continue;
+                    
+                    const route = graph[current.city][neighbor];
+                    const tentativeGScore = gScore[current.city] + route.distance;
+                    
+                    if (!openSet.find(item => item.city === neighbor)) {
+                        openSet.push({
+                            city: neighbor,
+                            f: 0,
+                            g: 0,
+                            h: 0,
+                            path: [...current.path, neighbor],
+                            distance: current.distance + route.distance,
+                            time: current.time + route.time
+                        });
+                    }
+                    
+                    if (tentativeGScore >= gScore[neighbor]) continue;
+                    
+                    cameFrom[neighbor] = current.city;
+                    gScore[neighbor] = tentativeGScore;
+                    fScore[neighbor] = gScore[neighbor] + this.heuristic(neighbor, destination);
+                    
+                    const neighborNode = openSet.find(item => item.city === neighbor);
+                    if (neighborNode) {
+                        neighborNode.g = gScore[neighbor];
+                        neighborNode.f = fScore[neighbor];
+                    }
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    // Heuristic function for A* (straight-line distance)
+    heuristic(city1, city2) {
+        const city1Data = this.cities.find(c => c.name === city1);
+        const city2Data = this.cities.find(c => c.name === city2);
+        
+        if (!city1Data || !city2Data) return 0;
+        
+        const lat1 = city1Data.lat * Math.PI / 180;
+        const lon1 = city1Data.lon * Math.PI / 180;
+        const lat2 = city2Data.lat * Math.PI / 180;
+        const lon2 = city2Data.lon * Math.PI / 180;
+        
+        const R = 6371; // Earth's radius in km
+        const dLat = lat2 - lat1;
+        const dLon = lon2 - lon1;
+        
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat1) * Math.cos(lat2) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        
+        return R * c;
+    }
+    
+    // Build graph from routes
+    buildGraph() {
+        const graph = {};
+        
+        this.routes.forEach(route => {
+            if (!graph[route.from]) {
+                graph[route.from] = {};
+            }
+            if (!graph[route.to]) {
+                graph[route.to] = {};
+            }
+            
+            graph[route.from][route.to] = route;
+            // Add reverse route for undirected graph
+            graph[route.to][route.from] = {
+                from: route.to,
+                to: route.from,
+                distance: route.distance,
+                time: route.time,
+                transport: route.transport
+            };
+        });
+        
+        return graph;
+    }
+    
+    // Reconstruct path from previous nodes
+    reconstructPath(source, destination, previous, distances, algorithm) {
+        const path = [];
+        let current = destination;
+        
+        while (current !== source) {
+            path.unshift(current);
+            current = previous[current];
+            if (!current) break;
+        }
+        
+        if (current === source) {
+            path.unshift(source);
+        }
+        
+        const routeDetails = this.getRouteDetails(path);
+        let totalDistance = 0;
+        let totalTime = 0;
+        
+        routeDetails.forEach(route => {
+            totalDistance += route.distance;
+            totalTime += route.time;
+        });
         
         return {
             path: path,
@@ -211,18 +623,19 @@ class PathfindingVisualizer {
         };
     }
     
-    findIntermediateCity(from, to) {
-        // Find a city that connects from and to
-        const fromRoutes = this.routes.filter(r => r.from === from).map(r => r.to);
-        const toRoutes = this.routes.filter(r => r.to === to).map(r => r.from);
-        
-        for (const city of fromRoutes) {
-            if (toRoutes.includes(city)) {
-                return city;
+    // Get route details for a path
+    getRouteDetails(path) {
+        const details = [];
+        for (let i = 0; i < path.length - 1; i++) {
+            const route = this.routes.find(r => 
+                (r.from === path[i] && r.to === path[i + 1]) ||
+                (r.from === path[i + 1] && r.to === path[i])
+            );
+            if (route) {
+                details.push(route);
             }
         }
-        
-        return null;
+        return details;
     }
     
     displayPath() {
@@ -238,6 +651,11 @@ class PathfindingVisualizer {
         
         // Update path details
         this.displayPathDetails();
+        
+        // Start person animation
+        setTimeout(() => {
+            this.animatePersonAlongPath();
+        }, 1000);
     }
     
     highlightPath() {
@@ -263,16 +681,45 @@ class PathfindingVisualizer {
             if (pathNode) pathNode.classList.add('path');
         }
         
-        // Highlight route lines
-        this.currentPath.routeDetails.forEach(route => {
+        // Highlight route lines for the actual path
+        for (let i = 0; i < this.currentPath.path.length - 1; i++) {
+            const from = this.currentPath.path[i];
+            const to = this.currentPath.path[i + 1];
+            
+            // Find the route line that connects these two cities
             const routeLines = document.querySelectorAll('.route-line');
             routeLines.forEach(line => {
-                // Simple matching - in a real implementation, you'd need more sophisticated matching
-                if (Math.random() > 0.5) { // Simulate path highlighting
+                // Check if this line connects the two cities in the path
+                const lineFrom = this.getCityFromRouteLine(line, from);
+                const lineTo = this.getCityFromRouteLine(line, to);
+                
+                if (lineFrom && lineTo && 
+                    ((lineFrom === from && lineTo === to) || 
+                     (lineFrom === to && lineTo === from))) {
                     line.classList.add('path');
                 }
             });
-        });
+        }
+    }
+    
+    // Helper function to determine which cities a route line connects
+    getCityFromRouteLine(line, cityName) {
+        // This is a simplified approach - in a real implementation, you'd store more data
+        // For now, we'll use the line's position and try to match it with city positions
+        const cityNode = document.querySelector(`[title="${cityName}"]`);
+        if (!cityNode) return null;
+        
+        const cityRect = cityNode.getBoundingClientRect();
+        const lineRect = line.getBoundingClientRect();
+        
+        // Check if the line is close to this city
+        const tolerance = 20; // pixels
+        if (Math.abs(cityRect.left - lineRect.left) < tolerance && 
+            Math.abs(cityRect.top - lineRect.top) < tolerance) {
+            return cityName;
+        }
+        
+        return null;
     }
     
     displayPathDetails() {
@@ -320,22 +767,40 @@ class PathfindingVisualizer {
         
         setTimeout(() => {
             this.comparisonResults = this.simulateAlgorithmComparison(source, destination);
-            this.displayComparisonResults();
-            this.updateStatus('Comparison complete');
+            if (this.comparisonResults) {
+                this.displayComparisonResults();
+                this.updateStatus('Comparison complete');
+            }
         }, 1500);
     }
     
     simulateAlgorithmComparison(source, destination) {
-        const algorithms = ['dijkstra', 'bellman-ford', 'floyd-warshall', 'a-star'];
+        const algorithms = ['dijkstra', 'bfs', 'a-star'];
         const results = [];
         
         algorithms.forEach(algo => {
-            const result = this.simulatePathfinding(source, destination, algo);
-            // Add some variation to make comparison interesting
-            result.totalDistance *= (0.9 + Math.random() * 0.2);
-            result.totalTime *= (0.9 + Math.random() * 0.2);
-            results.push(result);
+            let result;
+            switch (algo) {
+                case 'dijkstra':
+                    result = this.dijkstra(source, destination);
+                    break;
+                case 'bfs':
+                    result = this.bfs(source, destination);
+                    break;
+                case 'a-star':
+                    result = this.aStar(source, destination);
+                    break;
+            }
+            if (result) {
+                results.push(result);
+            }
         });
+        
+        if (results.length === 0) {
+            alert('No path found between the selected cities by any algorithm. Please try different cities.');
+            this.updateStatus('No paths found');
+            return null;
+        }
         
         return results;
     }
@@ -344,7 +809,10 @@ class PathfindingVisualizer {
         const container = document.getElementById('comparisonResults');
         const tableContainer = document.getElementById('comparisonTable');
         
-        if (!this.comparisonResults) return;
+        if (!this.comparisonResults || this.comparisonResults.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
         
         let html = `
             <table class="comparison-table">
@@ -385,6 +853,17 @@ class PathfindingVisualizer {
     reset() {
         this.currentPath = null;
         this.comparisonResults = null;
+        
+        // Hide person character
+        if (this.person) {
+            this.person.style.display = 'none';
+        }
+        
+        // Remove person progress display
+        const progressContainer = document.getElementById('personProgress');
+        if (progressContainer) {
+            progressContainer.remove();
+        }
         
         // Reset form
         document.getElementById('sourceCity').value = '';
