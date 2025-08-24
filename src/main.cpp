@@ -1,239 +1,247 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <chrono>
+#include <algorithm>
 #include <random>
 #include <fstream>
-#include <sstream>
 #include "sorting_analyzer.h"
 
 class SortingVisualizer {
 private:
-    std::vector<int> data;
-    std::vector<std::vector<int>> steps;
+    std::vector<int> array;
+    int comparisons;
+    int swaps;
     
 public:
-    SortingVisualizer() = default;
+    SortingVisualizer() : comparisons(0), swaps(0) {}
     
-    void generateRandomData(int size, int min = 1, int max = 100) {
-        data.clear();
-        steps.clear();
-        
+    void generateRandomArray(int size, int min = 1, int max = 100) {
+        array.clear();
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> dis(min, max);
         
         for (int i = 0; i < size; ++i) {
-            data.push_back(dis(gen));
-        }
-        
-        // Store initial state
-        steps.push_back(data);
-    }
-    
-    void loadDataFromFile(const std::string& filename) {
-        std::ifstream file(filename);
-        if (!file.is_open()) {
-            std::cerr << "Error: Could not open file " << filename << std::endl;
-            return;
-        }
-        
-        data.clear();
-        steps.clear();
-        
-        int value;
-        while (file >> value) {
-            data.push_back(value);
-        }
-        
-        steps.push_back(data);
-        file.close();
-    }
-    
-    void bubbleSort() {
-        steps.clear();
-        steps.push_back(data);
-        
-        std::vector<int> arr = data;
-        int n = arr.size();
-        
-        for (int i = 0; i < n - 1; ++i) {
-            for (int j = 0; j < n - i - 1; ++j) {
-                if (arr[j] > arr[j + 1]) {
-                    std::swap(arr[j], arr[j + 1]);
-                    steps.push_back(arr);
-                }
-            }
+            array.push_back(dis(gen));
         }
     }
     
-    void quickSort() {
-        steps.clear();
-        steps.push_back(data);
-        
-        std::vector<int> arr = data;
-        quickSortHelper(arr, 0, arr.size() - 1);
-    }
-    
-    void quickSortHelper(std::vector<int>& arr, int low, int high) {
-        if (low < high) {
-            int pi = partition(arr, low, high);
-            quickSortHelper(arr, low, pi - 1);
-            quickSortHelper(arr, pi + 1, high);
-        }
-    }
-    
-    int partition(std::vector<int>& arr, int low, int high) {
-        int pivot = arr[high];
-        int i = (low - 1);
-        
-        for (int j = low; j <= high - 1; j++) {
-            if (arr[j] < pivot) {
-                i++;
-                std::swap(arr[i], arr[j]);
-                steps.push_back(arr);
-            }
-        }
-        std::swap(arr[i + 1], arr[high]);
-        steps.push_back(arr);
-        return (i + 1);
-    }
-    
-    void mergeSort() {
-        steps.clear();
-        steps.push_back(data);
-        
-        std::vector<int> arr = data;
-        mergeSortHelper(arr, 0, arr.size() - 1);
-    }
-    
-    void mergeSortHelper(std::vector<int>& arr, int left, int right) {
-        if (left < right) {
-            int mid = left + (right - left) / 2;
-            mergeSortHelper(arr, left, mid);
-            mergeSortHelper(arr, mid + 1, right);
-            merge(arr, left, mid, right);
-        }
-    }
-    
-    void merge(std::vector<int>& arr, int left, int mid, int right) {
-        int i, j, k;
-        int n1 = mid - left + 1;
-        int n2 = right - mid;
-        
-        std::vector<int> L(n1), R(n2);
-        
-        for (i = 0; i < n1; i++)
-            L[i] = arr[left + i];
-        for (j = 0; j < n2; j++)
-            R[j] = arr[mid + 1 + j];
-        
-        i = 0;
-        j = 0;
-        k = left;
-        
-        while (i < n1 && j < n2) {
-            if (L[i] <= R[j]) {
-                arr[k] = L[i];
-                i++;
-            } else {
-                arr[k] = R[j];
-                j++;
-            }
-            k++;
-        }
-        
-        while (i < n1) {
-            arr[k] = L[i];
-            i++;
-            k++;
-        }
-        
-        while (j < n2) {
-            arr[k] = R[j];
-            j++;
-            k++;
-        }
-        
-        steps.push_back(arr);
-    }
-    
-    void exportSteps(const std::string& filename) {
-        std::ofstream file(filename);
-        if (!file.is_open()) {
-            std::cerr << "Error: Could not create file " << filename << std::endl;
-            return;
-        }
-        
-        for (const auto& step : steps) {
-            for (size_t i = 0; i < step.size(); ++i) {
-                file << step[i];
-                if (i < step.size() - 1) file << " ";
-            }
-            file << std::endl;
-        }
-        
-        file.close();
-        std::cout << "Steps exported to " << filename << std::endl;
-    }
-    
-    void printData() const {
-        std::cout << "Current data: ";
-        for (int val : data) {
+    void displayArray() const {
+        std::cout << "Array: ";
+        for (int val : array) {
             std::cout << val << " ";
         }
         std::cout << std::endl;
     }
     
-    void printSteps() const {
-        std::cout << "Sorting steps (" << steps.size() << " total):" << std::endl;
-        for (size_t i = 0; i < steps.size(); ++i) {
-            std::cout << "Step " << i << ": ";
-            for (int val : steps[i]) {
-                std::cout << val << " ";
+    // Bubble Sort - O(n²)
+    void bubbleSort() {
+        comparisons = 0;
+        swaps = 0;
+        int n = array.size();
+        
+        for (int i = 0; i < n - 1; ++i) {
+            for (int j = 0; j < n - i - 1; ++j) {
+                comparisons++;
+                if (array[j] > array[j + 1]) {
+                    std::swap(array[j], array[j + 1]);
+                    swaps++;
+                }
             }
-            std::cout << std::endl;
         }
     }
     
-    const std::vector<std::vector<int>>& getSteps() const {
-        return steps;
+    // Quick Sort - O(n log n) average, O(n²) worst case
+    void quickSort() {
+        comparisons = 0;
+        swaps = 0;
+        quickSortHelper(0, array.size() - 1);
     }
     
-    const std::vector<int>& getData() const {
-        return data;
+private:
+    void quickSortHelper(int low, int high) {
+        if (low < high) {
+            int pi = partition(low, high);
+            quickSortHelper(low, pi - 1);
+            quickSortHelper(pi + 1, high);
+        }
+    }
+    
+    int partition(int low, int high) {
+        int pivot = array[high];
+        int i = low - 1;
+        
+        for (int j = low; j < high; ++j) {
+            comparisons++;
+            if (array[j] <= pivot) {
+                i++;
+                if (i != j) {
+                    std::swap(array[i], array[j]);
+                    swaps++;
+                }
+            }
+        }
+        
+        if (i + 1 != high) {
+            std::swap(array[i + 1], array[high]);
+            swaps++;
+        }
+        
+        return i + 1;
+    }
+    
+public:
+    // Merge Sort - O(n log n)
+    void mergeSort() {
+        comparisons = 0;
+        swaps = 0;
+        mergeSortHelper(0, array.size() - 1);
+    }
+    
+private:
+    void mergeSortHelper(int left, int right) {
+        if (left < right) {
+            int mid = left + (right - left) / 2;
+            mergeSortHelper(left, mid);
+            mergeSortHelper(mid + 1, right);
+            merge(left, mid, right);
+        }
+    }
+    
+    void merge(int left, int mid, int right) {
+        std::vector<int> temp(right - left + 1);
+        int i = left, j = mid + 1, k = 0;
+        
+        while (i <= mid && j <= right) {
+            comparisons++;
+            if (array[i] <= array[j]) {
+                temp[k++] = array[i++];
+            } else {
+                temp[k++] = array[j++];
+            }
+        }
+        
+        while (i <= mid) {
+            temp[k++] = array[i++];
+        }
+        
+        while (j <= right) {
+            temp[k++] = array[j++];
+        }
+        
+        for (int x = 0; x < k; ++x) {
+            array[left + x] = temp[x];
+            swaps++;
+        }
+    }
+    
+public:
+    // Insertion Sort - O(n²)
+    void insertionSort() {
+        comparisons = 0;
+        swaps = 0;
+        int n = array.size();
+        
+        for (int i = 1; i < n; ++i) {
+            int key = array[i];
+            int j = i - 1;
+            
+            while (j >= 0 && array[j] > key) {
+                comparisons++;
+                array[j + 1] = array[j];
+                swaps++;
+                j--;
+            }
+            array[j + 1] = key;
+        }
+    }
+    
+    // Selection Sort - O(n²)
+    void selectionSort() {
+        comparisons = 0;
+        swaps = 0;
+        int n = array.size();
+        
+        for (int i = 0; i < n - 1; ++i) {
+            int min_idx = i;
+            for (int j = i + 1; j < n; ++j) {
+                comparisons++;
+                if (array[j] < array[min_idx]) {
+                    min_idx = j;
+                }
+            }
+            
+            if (min_idx != i) {
+                std::swap(array[min_idx], array[i]);
+                swaps++;
+            }
+        }
+    }
+    
+    // Getter methods
+    int getComparisons() const { return comparisons; }
+    int getSwaps() const { return swaps; }
+    const std::vector<int>& getArray() const { return array; }
+    
+    // Check if array is sorted
+    bool isSorted() const {
+        for (size_t i = 1; i < array.size(); ++i) {
+            if (array[i] < array[i - 1]) return false;
+        }
+        return true;
     }
 };
 
 int main() {
     SortingVisualizer visualizer;
+    std::cout << "=== DSA Sorting Algorithm Visualizer ===" << std::endl;
     
-    std::cout << "=== Sorting Visualizer ===" << std::endl;
+    // Test with different array sizes
+    std::vector<int> sizes = {10, 50, 100, 500, 1000};
     
-    // Generate random data
-    visualizer.generateRandomData(10);
-    std::cout << "Generated random data:" << std::endl;
-    visualizer.printData();
+    for (int size : sizes) {
+        std::cout << "\n--- Testing with array size: " << size << " ---" << std::endl;
+        
+        // Generate random array
+        visualizer.generateRandomArray(size);
+        std::cout << "Original array (first 10 elements): ";
+        auto arr = visualizer.getArray();
+        for (int i = 0; i < std::min(10, size); ++i) {
+            std::cout << arr[i] << " ";
+        }
+        if (size > 10) std::cout << "...";
+        std::cout << std::endl;
+        
+        // Test all sorting algorithms
+        std::vector<std::pair<std::string, std::function<void()>>> algorithms = {
+            {"Bubble Sort", [&]() { visualizer.bubbleSort(); }},
+            {"Quick Sort", [&]() { visualizer.quickSort(); }},
+            {"Merge Sort", [&]() { visualizer.mergeSort(); }},
+            {"Insertion Sort", [&]() { visualizer.insertionSort(); }},
+            {"Selection Sort", [&]() { visualizer.selectionSort(); }}
+        };
+        
+        for (const auto& algorithm : algorithms) {
+            const std::string& name = algorithm.first;
+            const auto& algo = algorithm.second;
+            
+            // Generate fresh array for each algorithm
+            visualizer.generateRandomArray(size);
+            
+            auto start = std::chrono::high_resolution_clock::now();
+            algo();
+            auto end = std::chrono::high_resolution_clock::now();
+            
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+            
+            std::cout << name << ": ";
+            std::cout << "Comparisons: " << visualizer.getComparisons() << ", ";
+            std::cout << "Swaps: " << visualizer.getSwaps() << ", ";
+            std::cout << "Time: " << duration.count() << " μs, ";
+            std::cout << "Sorted: " << (visualizer.isSorted() ? "Yes" : "No") << std::endl;
+        }
+    }
     
-    // Test different sorting algorithms
-    std::cout << "\n=== Bubble Sort ===" << std::endl;
-    visualizer.bubbleSort();
-    visualizer.printSteps();
-    
-    // Generate new data for next test
-    visualizer.generateRandomData(8);
-    std::cout << "\n=== Quick Sort ===" << std::endl;
-    visualizer.quickSort();
-    visualizer.printSteps();
-    
-    // Generate new data for next test
-    visualizer.generateRandomData(12);
-    std::cout << "\n=== Merge Sort ===" << std::endl;
-    visualizer.mergeSort();
-    visualizer.printSteps();
-    
-    // Export steps to file
-    visualizer.exportSteps("sorting_steps.txt");
-    
+    std::cout << "\n=== DSA Analysis Complete ===" << std::endl;
     return 0;
 }

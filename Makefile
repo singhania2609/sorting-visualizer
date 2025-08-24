@@ -1,52 +1,52 @@
-# Sorting Visualizer and Pathfinding Makefile
+# Makefile for DSA Sorting and Pathfinding Visualizer
 # Compiler and flags
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -g
-TARGET = sorting_visualizer
-PATHFINDING_TARGET = pathfinding_demo
-SRCDIR = src
-OBJDIR = obj
-SOURCES = $(wildcard $(SRCDIR)/*.cpp)
-OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+LDFLAGS = 
 
-# Filter out pathfinding_main.cpp for sorting target
-SORTING_SOURCES = $(filter-out $(SRCDIR)/pathfinding_main.cpp, $(SOURCES))
-SORTING_OBJECTS = $(SORTING_SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+# Directories
+SRC_DIR = src
+BUILD_DIR = build
+EXAMPLES_DIR = examples
 
-# Pathfinding sources (exclude main.cpp)
-PATHFINDING_SOURCES = $(filter-out $(SRCDIR)/main.cpp, $(SOURCES))
-PATHFINDING_OBJECTS = $(PATHFINDING_SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+# Source files
+SORTING_SOURCES = $(SRC_DIR)/main.cpp
+PATHFINDING_SOURCES = $(SRC_DIR)/pathfinding.cpp $(SRC_DIR)/pathfinding_main.cpp
+
+# Executables
+SORTING_EXEC = sorting_visualizer
+PATHFINDING_EXEC = pathfinding_visualizer
 
 # Default target
-all: $(TARGET) $(PATHFINDING_TARGET)
+all: $(SORTING_EXEC) $(PATHFINDING_EXEC)
 
-# Create object directory if it doesn't exist
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
+# Create build directory
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
 
-# Compile object files
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+# Compile sorting visualizer
+$(SORTING_EXEC): $(SORTING_SOURCES) | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -o $(BUILD_DIR)/$@ $^ $(LDFLAGS)
+	@echo "Sorting visualizer compiled successfully!"
 
-# Link the sorting visualizer executable
-$(TARGET): $(SORTING_OBJECTS)
-	$(CXX) $(SORTING_OBJECTS) -o $(TARGET)
+# Compile pathfinding visualizer
+$(PATHFINDING_EXEC): $(PATHFINDING_SOURCES) | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -o $(BUILD_DIR)/$@ $^ $(LDFLAGS)
+	@echo "Pathfinding visualizer compiled successfully!"
 
-# Link the pathfinding demo executable
-$(PATHFINDING_TARGET): $(PATHFINDING_OBJECTS)
-	$(CXX) $(PATHFINDING_OBJECTS) -o $(PATHFINDING_TARGET)
+# Run sorting visualizer
+run-sorting: $(SORTING_EXEC)
+	./$(BUILD_DIR)/$(SORTING_EXEC)
 
-# Run the sorting program
-run: $(TARGET)
-	./$(TARGET)
-
-# Run the pathfinding program
-run-pathfinding: $(PATHFINDING_TARGET)
-	./$(PATHFINDING_TARGET)
+# Run pathfinding visualizer
+run-pathfinding: $(PATHFINDING_EXEC)
+	./$(BUILD_DIR)/$(PATHFINDING_EXEC)
 
 # Clean build files
 clean:
-	rm -rf $(OBJDIR) $(TARGET) $(PATHFINDING_TARGET)
+	rm -rf $(BUILD_DIR)
+	rm -f *.txt
+	@echo "Build files cleaned!"
 
 # Clean and rebuild
 rebuild: clean all
@@ -54,93 +54,59 @@ rebuild: clean all
 # Install dependencies (for Ubuntu/Debian)
 install-deps:
 	sudo apt-get update
-	sudo apt-get install -y build-essential
+	sudo apt-get install -y build-essential g++ make
+
+# Install dependencies (for CentOS/RHEL/Fedora)
+install-deps-rpm:
+	sudo yum groupinstall -y "Development Tools"
+	# or for newer versions: sudo dnf groupinstall -y "Development Tools"
 
 # Install dependencies (for macOS)
 install-deps-mac:
-	brew install gcc
+	xcode-select --install
 
-# Install dependencies (for Windows with MinGW)
-install-deps-windows:
-	# Assuming MinGW is already installed
-	# If not, download from: https://www.mingw-w64.org/
+# Show help
+help:
+	@echo "Available targets:"
+	@echo "  all              - Build both visualizers (default)"
+	@echo "  sorting_visualizer - Build only sorting visualizer"
+	@echo "  pathfinding_visualizer - Build only pathfinding visualizer"
+	@echo "  run-sorting      - Build and run sorting visualizer"
+	@echo "  run-pathfinding  - Build and run pathfinding visualizer"
+	@echo "  clean            - Remove build files"
+	@echo "  rebuild          - Clean and rebuild everything"
+	@echo "  install-deps     - Install build dependencies (Ubuntu/Debian)"
+	@echo "  install-deps-rpm - Install build dependencies (CentOS/RHEL/Fedora)"
+	@echo "  install-deps-mac - Install build dependencies (macOS)"
+	@echo "  help             - Show this help message"
 
-# Test the sorting program
-test: $(TARGET)
-	./$(TARGET) > test_output.txt
-	@echo "Test completed. Check test_output.txt for results."
+# Phony targets
+.PHONY: all clean rebuild install-deps install-deps-rpm install-deps-mac help run-sorting run-pathfinding
 
-# Test the pathfinding program
-test-pathfinding: $(PATHFINDING_TARGET)
-	./$(PATHFINDING_TARGET) > pathfinding_test_output.txt
-	@echo "Pathfinding test completed. Check pathfinding_test_output.txt for results."
+# Create examples directory and sample files
+examples: $(EXAMPLES_DIR)
+	@echo "Creating example files..."
+	@echo "Sample test data for sorting algorithms" > $(EXAMPLES_DIR)/test_data.txt
+	@echo "64 34 25 12 22 11 90" >> $(EXAMPLES_DIR)/test_data.txt
+	@echo "Benchmark results will be saved here" > $(EXAMPLES_DIR)/benchmark_results.txt
+	@echo "Examples directory created with sample files!"
 
-# Benchmark mode
-benchmark: $(TARGET)
-	./$(TARGET)
+$(EXAMPLES_DIR):
+	mkdir -p $(EXAMPLES_DIR)
 
 # Debug build
 debug: CXXFLAGS += -DDEBUG -g3
-debug: $(TARGET)
+debug: all
 
 # Release build
-release: CXXFLAGS += -DNDEBUG -O3
-release: clean $(TARGET)
+release: CXXFLAGS += -O3 -DNDEBUG
+release: all
 
-# Generate documentation
-docs:
-	@echo "Generating documentation..."
-	@echo "# Sorting Visualizer Documentation" > docs/README.md
-	@echo "" >> docs/README.md
-	@echo "## Features" >> docs/README.md
-	@echo "- Basic sorting algorithms (Bubble, Quick, Merge)" >> docs/README.md
-	@echo "- Performance metrics and analysis" >> docs/README.md
-	@echo "- Step-by-step visualization" >> docs/README.md
-	@echo "- Data export and import" >> docs/README.md
-	@echo "Documentation generated in docs/README.md"
+# Profile build
+profile: CXXFLAGS += -pg
+profile: LDFLAGS += -pg
+profile: all
 
-# Create project structure
-setup:
-	mkdir -p docs
-	mkdir -p examples
-	mkdir -p frontend
-	@echo "Project structure created"
-
-# Help target
-help:
-	@echo "Available targets:"
-	@echo "  all              - Build both sorting visualizer and pathfinding demo"
-	@echo "  sorting          - Build only the sorting visualizer"
-	@echo "  pathfinding      - Build only the pathfinding demo"
-	@echo "  run              - Build and run the sorting program"
-	@echo "  run-pathfinding  - Build and run the pathfinding program"
-	@echo "  clean            - Remove build files"
-	@echo "  rebuild          - Clean and rebuild"
-	@echo "  test             - Run sorting tests"
-	@echo "  test-pathfinding - Run pathfinding tests"
-	@echo "  benchmark        - Run sorting program with benchmarking"
-	@echo "  debug            - Build with debug symbols"
-	@echo "  release          - Build optimized release version"
-	@echo "  docs             - Generate documentation"
-	@echo "  setup            - Create project structure"
-	@echo "  help             - Show this help message"
-	@echo ""
-	@echo "Sorting Features:"
-	@echo "  - Basic sorting algorithms (Bubble, Quick, Merge)"
-	@echo "  - Performance metrics and analysis"
-	@echo "  - Step-by-step visualization"
-	@echo "  - Data export and import"
-	@echo ""
-	@echo "Pathfinding Features:"
-	@echo "  - Multiple pathfinding algorithms (Dijkstra, Bellman-Ford, Floyd-Warshall, A*)"
-	@echo "  - City network with real coordinates"
-	@echo "  - Distance and time optimization"
-	@echo "  - Route visualization and comparison"
-	@echo ""
-	@echo "Dependency installation:"
-	@echo "  install-deps       - Install dependencies (Ubuntu/Debian)"
-	@echo "  install-deps-mac   - Install dependencies (macOS)"
-	@echo "  install-deps-windows - Install dependencies (Windows)"
-
-# Phony targets
-.PHONY: all run run-pathfinding clean rebuild test test-pathfinding benchmark debug release docs setup help install-deps install-deps-mac install-deps-windows sorting pathfinding
+# Static linking
+static: LDFLAGS += -static
+static: all

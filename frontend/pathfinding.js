@@ -91,7 +91,7 @@ class PathfindingVisualizer {
     initializeEventListeners() {
         document.getElementById('findPathBtn').addEventListener('click', () => this.findPath());
         document.getElementById('compareBtn').addEventListener('click', () => this.compareAlgorithms());
-        document.getElementById('resetBtn').addEventListener('click', () => this.reset());
+        document.getElementById('resetPathBtn').addEventListener('click', () => this.reset());
         document.getElementById('exportBtn').addEventListener('click', () => this.exportResults());
     }
     
@@ -340,7 +340,7 @@ class PathfindingVisualizer {
     findPath() {
         const source = document.getElementById('sourceCity').value;
         const destination = document.getElementById('destCity').value;
-        const algorithm = document.getElementById('algorithm').value;
+        const algorithm = document.getElementById('pathfindingAlgorithm').value;
         
         if (!source || !destination) {
             alert('Please select both source and destination cities.');
@@ -364,8 +364,8 @@ class PathfindingVisualizer {
                 case 'bfs':
                     result = this.bfs(source, destination);
                     break;
-                case 'a-star':
-                    result = this.aStar(source, destination);
+                case 'dfs':
+                    result = this.dfs(source, destination);
                     break;
                 default:
                     result = this.dijkstra(source, destination);
@@ -469,75 +469,54 @@ class PathfindingVisualizer {
         return null;
     }
     
-    // A* Algorithm
-    aStar(source, destination) {
-        const openSet = [{ city: source, f: 0, g: 0, h: 0, path: [source], distance: 0, time: 0 }];
-        const closedSet = new Set();
+    // DFS Algorithm
+    dfs(source, destination) {
+        const visited = new Set();
         const cameFrom = {};
-        const gScore = {};
-        const fScore = {};
+        let found = false;
         const graph = this.buildGraph();
         
-        // Initialize scores
-        this.cities.forEach(city => {
-            gScore[city.name] = Infinity;
-            fScore[city.name] = Infinity;
-        });
-        gScore[source] = 0;
-        fScore[source] = this.heuristic(source, destination);
-        
-        while (openSet.length > 0) {
-            // Find city with lowest f score
-            openSet.sort((a, b) => a.f - b.f);
-            const current = openSet.shift();
+        const dfsHelper = (current, path = [source], distance = 0, time = 0) => {
+            if (found || visited.has(current)) return null;
             
-            if (current.city === destination) {
+            visited.add(current);
+            
+            if (current === destination) {
+                found = true;
                 return {
-                    path: current.path,
-                    totalDistance: current.distance,
-                    totalTime: current.time,
-                    routeDetails: this.getRouteDetails(current.path),
-                    algorithm: 'a-star'
+                    path: path,
+                    totalDistance: distance,
+                    totalTime: time,
+                    routeDetails: this.getRouteDetails(path),
+                    algorithm: 'dfs'
                 };
             }
             
-            closedSet.add(current.city);
-            
-            if (graph[current.city]) {
-                for (const neighbor in graph[current.city]) {
-                    if (closedSet.has(neighbor)) continue;
-                    
-                    const route = graph[current.city][neighbor];
-                    const tentativeGScore = gScore[current.city] + route.distance;
-                    
-                    if (!openSet.find(item => item.city === neighbor)) {
-                        openSet.push({
-                            city: neighbor,
-                            f: 0,
-                            g: 0,
-                            h: 0,
-                            path: [...current.path, neighbor],
-                            distance: current.distance + route.distance,
-                            time: current.time + route.time
-                        });
-                    }
-                    
-                    if (tentativeGScore >= gScore[neighbor]) continue;
-                    
-                    cameFrom[neighbor] = current.city;
-                    gScore[neighbor] = tentativeGScore;
-                    fScore[neighbor] = gScore[neighbor] + this.heuristic(neighbor, destination);
-                    
-                    const neighborNode = openSet.find(item => item.city === neighbor);
-                    if (neighborNode) {
-                        neighborNode.g = gScore[neighbor];
-                        neighborNode.f = fScore[neighbor];
+            if (graph[current]) {
+                for (const neighbor in graph[current]) {
+                    if (!visited.has(neighbor) && !found) {
+                        const route = graph[current][neighbor];
+                        const result = dfsHelper(
+                            neighbor, 
+                            [...path, neighbor], 
+                            distance + route.distance, 
+                            time + route.time
+                        );
+                        if (result) return result;
                     }
                 }
             }
-        }
+            
+            return null;
+        };
         
-        return null;
+        return dfsHelper(source) || {
+            path: [],
+            totalDistance: 0,
+            totalTime: 0,
+            routeDetails: [],
+            algorithm: 'dfs'
+        };
     }
     
     // Heuristic function for A* (straight-line distance)
@@ -775,7 +754,7 @@ class PathfindingVisualizer {
     }
     
     simulateAlgorithmComparison(source, destination) {
-        const algorithms = ['dijkstra', 'bfs', 'a-star'];
+        const algorithms = ['dijkstra', 'bfs', 'dfs'];
         const results = [];
         
         algorithms.forEach(algo => {
@@ -787,8 +766,8 @@ class PathfindingVisualizer {
                 case 'bfs':
                     result = this.bfs(source, destination);
                     break;
-                case 'a-star':
-                    result = this.aStar(source, destination);
+                case 'dfs':
+                    result = this.dfs(source, destination);
                     break;
             }
             if (result) {
@@ -868,7 +847,7 @@ class PathfindingVisualizer {
         // Reset form
         document.getElementById('sourceCity').value = '';
         document.getElementById('destCity').value = '';
-        document.getElementById('algorithm').value = 'dijkstra';
+        document.getElementById('pathfindingAlgorithm').value = 'dijkstra';
         
         // Reset display
         document.getElementById('totalDistance').textContent = '0 km';

@@ -6,46 +6,54 @@
 #include <chrono>
 #include <functional>
 
+/**
+ * Sorting Algorithm Analyzer
+ * Provides analysis and benchmarking for various sorting algorithms
+ */
+
 class SortingAnalyzer {
 public:
-    struct SortResult {
-        std::string algorithm_name;
-        double execution_time_ms;
-        int comparisons;
-        int swaps;
-        bool is_sorted;
+    // Performance metrics structure
+    struct PerformanceMetrics {
+        long long comparisons;
+        long long swaps;
+        long long executionTime; // in microseconds
+        bool isCorrectlySorted;
+        std::string algorithmName;
+        
+        PerformanceMetrics() : comparisons(0), swaps(0), executionTime(0), isCorrectlySorted(false) {}
     };
     
-    // Performance analysis functions
-    static SortResult analyzeSort(const std::string& name, 
-                                 std::function<void(std::vector<int>&)> sort_func,
-                                 std::vector<int> data);
+    // Algorithm comparison result
+    struct AlgorithmComparison {
+        std::string name;
+        double timeComplexity; // theoretical complexity
+        PerformanceMetrics metrics;
+        
+        AlgorithmComparison(const std::string& n, double tc) : name(n), timeComplexity(tc) {}
+    };
     
-    static bool isSorted(const std::vector<int>& data);
-    static int countComparisons(const std::vector<int>& original, 
-                               const std::vector<int>& sorted);
-    static int countSwaps(const std::vector<int>& original, 
-                         const std::vector<int>& sorted);
+    // Benchmark different algorithms
+    static std::vector<AlgorithmComparison> benchmarkAlgorithms(
+        const std::vector<int>& data,
+        const std::vector<std::pair<std::string, std::function<void(std::vector<int>&)>>>& algorithms
+    );
     
-    // Data generation utilities
-    static std::vector<int> generateRandomData(int size, int min = 1, int max = 100);
-    static std::vector<int> generateSortedData(int size, bool ascending = true);
+    // Generate test data
+    static std::vector<int> generateRandomData(int size, int min = 1, int max = 1000);
+    static std::vector<int> generateNearlySortedData(int size, double disorderPercentage = 0.1);
     static std::vector<int> generateReverseSortedData(int size);
-    static std::vector<int> generateNearlySortedData(int size, double disorder_percentage = 0.1);
+    static std::vector<int> generateDuplicateData(int size, int uniqueValues = 10);
     
-    // Benchmarking functions
-    static std::vector<SortResult> benchmarkAlgorithms(
-        const std::vector<std::pair<std::string, std::function<void(std::vector<int>&)>>>& algorithms,
-        const std::vector<int>& data);
+    // Analysis functions
+    static void analyzeTimeComplexity(const std::vector<AlgorithmComparison>& results);
+    static void generateReport(const std::vector<AlgorithmComparison>& results, const std::string& filename);
     
-    static void exportBenchmarkResults(const std::vector<SortResult>& results, 
-                                      const std::string& filename);
-    
-    // Visualization helpers
-    static std::string arrayToString(const std::vector<int>& arr);
-    static void printArray(const std::vector<int>& arr);
-    static void printArrayWithHighlights(const std::vector<int>& arr, 
-                                       const std::vector<int>& highlights);
+    // Utility functions
+    static bool isSorted(const std::vector<int>& data);
+    static void printArray(const std::vector<int>& data, int maxElements = 20);
+    static double calculateAverage(const std::vector<long long>& values);
+    static long long calculateMedian(const std::vector<long long>& values);
 };
 
 #endif // SORTING_ANALYZER_H

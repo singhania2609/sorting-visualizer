@@ -4,8 +4,14 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <utility>
+#include <set>
+#include <queue>
 #include <limits>
+
+/**
+ * Pathfinding Algorithms Implementation
+ * Implements various graph traversal and shortest path algorithms
+ */
 
 struct City {
     std::string name;
@@ -13,72 +19,78 @@ struct City {
     double longitude;
     int population;
     
-    City(const std::string& n, double lat, double lon, int pop = 0) 
+    City(const std::string& n, double lat, double lon, int pop) 
         : name(n), latitude(lat), longitude(lon), population(pop) {}
 };
 
 struct Route {
     std::string from;
     std::string to;
-    double distance;  // in kilometers
-    double time;      // in hours (assuming average speed)
-    std::string transport_type; // "road", "rail", "air"
+    double distance; // in kilometers
+    double time;     // in hours
+    std::string transport; // "air" or "road"
     
-    Route(const std::string& f, const std::string& t, double dist, double t_time, const std::string& type = "road")
-        : from(f), to(t), distance(dist), time(t_time), transport_type(type) {}
+    Route(const std::string& f, const std::string& t, double dist, double t_time, const std::string& trans)
+        : from(f), to(t), distance(dist), time(t_time), transport(trans) {}
 };
 
 struct PathResult {
     std::vector<std::string> path;
-    double total_distance;
-    double total_time;
-    std::vector<Route> route_details;
-    std::string algorithm_used;
+    double totalDistance;
+    double totalTime;
+    std::vector<Route> routeDetails;
+    std::string algorithm;
     
-    PathResult() : total_distance(0.0), total_time(0.0) {}
+    PathResult() : totalDistance(0.0), totalTime(0.0) {}
 };
 
-class PathFinder {
+class PathfindingVisualizer {
 private:
     std::vector<City> cities;
-    std::map<std::pair<std::string, std::string>, Route> routes;
-    std::map<std::string, int> city_indices;
-    
-    double calculateDistance(const City& city1, const City& city2);
-    double calculateTime(const Route& route, const std::string& transport_type);
-    std::vector<std::string> reconstructPath(const std::vector<int>& previous, int start, int end);
+    std::vector<Route> routes;
+    std::map<std::string, std::map<std::string, Route>> graph;
     
 public:
-    PathFinder();
+    PathfindingVisualizer();
     
-    // City management
-    void addCity(const std::string& name, double lat, double lon, int population = 0);
-    void addRoute(const std::string& from, const std::string& to, double distance, double time, const std::string& transport = "road");
-    std::vector<City> getCities() const;
-    std::vector<Route> getRoutes() const;
+    // Graph building and management
+    void buildGraph();
+    void addCity(const City& city);
+    void addRoute(const Route& route);
     
     // Pathfinding algorithms
-    PathResult findShortestPath(const std::string& source, const std::string& destination, const std::string& algorithm = "dijkstra");
-    PathResult dijkstraShortestPath(const std::string& source, const std::string& destination);
-    PathResult bellmanFordShortestPath(const std::string& source, const std::string& destination);
-    PathResult floydWarshallShortestPath(const std::string& source, const std::string& destination);
-    PathResult aStarShortestPath(const std::string& source, const std::string& destination);
+            PathResult dijkstra(const std::string& source, const std::string& destination);
+        PathResult breadthFirstSearch(const std::string& source, const std::string& destination);
+        PathResult depthFirstSearch(const std::string& source, const std::string& destination);
     
-    // Analysis and comparison
+    // Algorithm comparison
     std::vector<PathResult> compareAlgorithms(const std::string& source, const std::string& destination);
-    void analyzeNetwork();
-    std::map<std::string, double> getCityDistances(const std::string& source);
     
     // Utility functions
-    bool cityExists(const std::string& name) const;
-    bool routeExists(const std::string& from, const std::string& to) const;
-    double getHeuristicDistance(const std::string& from, const std::string& to);
+    double calculateHeuristic(const std::string& city1, const std::string& city2);
     std::vector<std::string> getNeighbors(const std::string& city);
+    bool cityExists(const std::string& cityName);
+    void printPath(const PathResult& result);
     
-    // Export functions
-    void exportPathToFile(const PathResult& result, const std::string& filename);
-    void exportNetworkToFile(const std::string& filename);
-    std::string generatePathReport(const PathResult& result);
+    // Data export/import
+    void exportResults(const std::vector<PathResult>& results, const std::string& filename);
+    void loadCitiesFromFile(const std::string& filename);
+    void loadRoutesFromFile(const std::string& filename);
+    
+    // Analysis functions
+    void analyzeGraphProperties();
+    void findConnectedComponents();
+    void calculateAveragePathLength();
+    
+private:
+    // Helper functions for algorithms
+    std::string findMinDistanceCity(const std::map<std::string, double>& distances, const std::set<std::string>& unvisited);
+    std::vector<std::string> reconstructPath(const std::map<std::string, std::string>& previous, 
+                                           const std::string& source, const std::string& destination);
+    double haversineDistance(double lat1, double lon1, double lat2, double lon2);
+    void dfsHelper(const std::string& current, const std::string& destination, 
+                  std::map<std::string, bool>& visited, std::map<std::string, std::string>& previous,
+                  bool& found);
 };
 
 #endif // PATHFINDING_H

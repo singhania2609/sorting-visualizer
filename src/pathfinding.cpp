@@ -1,574 +1,566 @@
 #include "pathfinding.h"
 #include <iostream>
+#include <cmath>
 #include <fstream>
 #include <sstream>
-#include <iomanip>
-#include <queue>
-#include <set>
-#include <cmath>
 #include <algorithm>
 
-PathFinder::PathFinder() {
-    // Initialize with some default cities
-    addCity("New York", 40.7128, -74.0060, 8336817);
-    addCity("Los Angeles", 34.0522, -118.2437, 3979576);
-    addCity("Chicago", 41.8781, -87.6298, 2693976);
-    addCity("Houston", 29.7604, -95.3698, 2320268);
-    addCity("Phoenix", 33.4484, -112.0740, 1680992);
-    addCity("Philadelphia", 39.9526, -75.1652, 1603797);
-    addCity("San Antonio", 29.4241, -98.4936, 1547253);
-    addCity("San Diego", 32.7157, -117.1611, 1423851);
-    addCity("Dallas", 32.7767, -96.7970, 1343573);
-    addCity("San Jose", 37.3382, -121.8863, 1030119);
+PathfindingVisualizer::PathfindingVisualizer() {
+    // Initialize with Indian cities
+    cities = {
+        {"Mumbai", 19.0760, 72.8777, 20411274},
+        {"Delhi", 28.7041, 77.1025, 16787941},
+        {"Bangalore", 12.9716, 77.5946, 12479914},
+        {"Hyderabad", 17.3850, 78.4867, 10493900},
+        {"Chennai", 13.0827, 80.2707, 7088000},
+        {"Kolkata", 22.5726, 88.3639, 14916388},
+        {"Pune", 18.5204, 73.8567, 3124458},
+        {"Ahmedabad", 23.0225, 72.5714, 5577940},
+        {"Jaipur", 26.9124, 75.7873, 3073350},
+        {"Surat", 21.1702, 72.8311, 4467797},
+        {"Lucknow", 26.8467, 80.9462, 3382000},
+        {"Kanpur", 26.4499, 80.3319, 2767031},
+        {"Nagpur", 21.1458, 79.0882, 2405665},
+        {"Indore", 22.7196, 75.8577, 1994391},
+        {"Thane", 19.2183, 72.9781, 1841488},
+        {"Bhopal", 23.2599, 77.4126, 1798218},
+        {"Visakhapatnam", 17.6868, 83.2185, 1728128},
+        {"Pimpri-Chinchwad", 18.6298, 73.7997, 1726292},
+        {"Patna", 25.5941, 85.1376, 2046652},
+        {"Vadodara", 22.3072, 73.1812, 1670806}
+    };
     
-    // Add some default routes
-    addRoute("New York", "Los Angeles", 3935.0, 6.5, "air");
-    addRoute("New York", "Chicago", 1147.0, 2.5, "air");
-    addRoute("New York", "Houston", 2271.0, 4.0, "air");
-    addRoute("Los Angeles", "Chicago", 2788.0, 4.5, "air");
-    addRoute("Los Angeles", "Houston", 2197.0, 4.0, "air");
-    addRoute("Chicago", "Houston", 1124.0, 2.0, "air");
-    addRoute("Chicago", "Phoenix", 1759.0, 3.5, "air");
-    addRoute("Houston", "Phoenix", 1187.0, 2.5, "air");
-    addRoute("Phoenix", "San Diego", 572.0, 1.0, "air");
-    addRoute("San Diego", "Los Angeles", 120.0, 0.5, "road");
-    addRoute("Dallas", "Houston", 362.0, 0.8, "road");
-    addRoute("Dallas", "San Antonio", 274.0, 0.6, "road");
-    addRoute("San Jose", "San Francisco", 77.0, 0.3, "road");
-    addRoute("Philadelphia", "New York", 97.0, 0.3, "road");
-    addRoute("Philadelphia", "Washington DC", 225.0, 0.5, "road");
+    // Initialize routes between cities
+    routes = {
+        {"Mumbai", "Delhi", 1150.0, 2.0, "air"},
+        {"Mumbai", "Bangalore", 845.0, 1.5, "air"},
+        {"Mumbai", "Hyderabad", 710.0, 1.2, "air"},
+        {"Mumbai", "Chennai", 1035.0, 1.8, "air"},
+        {"Mumbai", "Kolkata", 1650.0, 2.5, "air"},
+        {"Delhi", "Bangalore", 1750.0, 2.8, "air"},
+        {"Delhi", "Hyderabad", 1580.0, 2.5, "air"},
+        {"Delhi", "Chennai", 1760.0, 2.8, "air"},
+        {"Delhi", "Kolkata", 1300.0, 2.0, "air"},
+        {"Bangalore", "Hyderabad", 570.0, 1.0, "air"},
+        {"Bangalore", "Chennai", 350.0, 0.8, "air"},
+        {"Bangalore", "Kolkata", 1550.0, 2.5, "air"},
+        {"Hyderabad", "Chennai", 625.0, 1.1, "air"},
+        {"Hyderabad", "Kolkata", 1200.0, 2.0, "air"},
+        {"Chennai", "Kolkata", 1660.0, 2.7, "air"},
+        {"Mumbai", "Pune", 150.0, 3.0, "road"},
+        {"Mumbai", "Ahmedabad", 530.0, 8.0, "road"},
+        {"Delhi", "Jaipur", 280.0, 5.0, "road"},
+        {"Delhi", "Lucknow", 500.0, 8.0, "road"},
+        {"Delhi", "Kanpur", 450.0, 7.0, "road"},
+        {"Bangalore", "Mysore", 150.0, 3.0, "road"},
+        {"Hyderabad", "Vijayawada", 280.0, 5.0, "road"},
+        {"Chennai", "Vellore", 130.0, 2.5, "road"},
+        {"Kolkata", "Howrah", 10.0, 0.5, "road"},
+        {"Pune", "Mumbai", 150.0, 3.0, "road"},
+        {"Ahmedabad", "Surat", 280.0, 5.0, "road"},
+        {"Jaipur", "Delhi", 280.0, 5.0, "road"},
+        {"Lucknow", "Kanpur", 80.0, 1.5, "road"},
+        {"Nagpur", "Bhopal", 320.0, 6.0, "road"},
+        {"Indore", "Bhopal", 190.0, 3.5, "road"},
+        {"Thane", "Mumbai", 25.0, 1.0, "road"},
+        {"Bhopal", "Indore", 190.0, 3.5, "road"},
+        {"Visakhapatnam", "Vijayawada", 350.0, 6.0, "road"},
+        {"Pimpri-Chinchwad", "Pune", 15.0, 0.5, "road"},
+        {"Patna", "Varanasi", 250.0, 5.0, "road"},
+        {"Vadodara", "Ahmedabad", 110.0, 2.0, "road"}
+    };
+    
+    buildGraph();
 }
 
-void PathFinder::addCity(const std::string& name, double lat, double lon, int population) {
-    cities.emplace_back(name, lat, lon, population);
-    city_indices[name] = cities.size() - 1;
-}
-
-void PathFinder::addRoute(const std::string& from, const std::string& to, double distance, double time, const std::string& transport) {
-    if (cityExists(from) && cityExists(to)) {
-        routes[{from, to}] = Route(from, to, distance, time, transport);
-        routes[{to, from}] = Route(to, from, distance, time, transport); // Bidirectional
+void PathfindingVisualizer::buildGraph() {
+    graph.clear();
+    
+    // Add all cities to graph
+    for (const auto& city : cities) {
+        graph[city.name] = std::map<std::string, Route>();
+    }
+    
+    // Add routes to graph
+    for (const auto& route : routes) {
+        graph[route.from][route.to] = route;
+        // Add reverse route for undirected graph
+        Route reverseRoute(route.to, route.from, route.distance, route.time, route.transport);
+        graph[route.to][route.from] = reverseRoute;
     }
 }
 
-std::vector<City> PathFinder::getCities() const {
-    return cities;
+void PathfindingVisualizer::addCity(const City& city) {
+    cities.push_back(city);
+    graph[city.name] = std::map<std::string, Route>();
 }
 
-std::vector<Route> PathFinder::getRoutes() const {
-    std::vector<Route> route_list;
-    for (const auto& route_pair : routes) {
-        route_list.push_back(route_pair.second);
-    }
-    return route_list;
+void PathfindingVisualizer::addRoute(const Route& route) {
+    routes.push_back(route);
+    graph[route.from][route.to] = route;
+    // Add reverse route for undirected graph
+    Route reverseRoute(route.to, route.from, route.distance, route.time, route.transport);
+    graph[route.to][route.from] = reverseRoute;
 }
 
-double PathFinder::calculateDistance(const City& city1, const City& city2) {
-    const double R = 6371; // Earth's radius in kilometers
-    double lat1 = city1.latitude * M_PI / 180;
-    double lat2 = city2.latitude * M_PI / 180;
-    double delta_lat = (city2.latitude - city1.latitude) * M_PI / 180;
-    double delta_lon = (city2.longitude - city1.longitude) * M_PI / 180;
-    
-    double a = sin(delta_lat/2) * sin(delta_lat/2) +
-               cos(lat1) * cos(lat2) *
-               sin(delta_lon/2) * sin(delta_lon/2);
-    double c = 2 * atan2(sqrt(a), sqrt(1-a));
-    
-    return R * c;
-}
-
-double PathFinder::calculateTime(const Route& route, const std::string& transport_type) {
-    double speed = 60.0; // Default speed in km/h
-    
-    if (transport_type == "air") {
-        speed = 800.0; // Average airplane speed
-    } else if (transport_type == "rail") {
-        speed = 120.0; // Average train speed
-    } else if (transport_type == "road") {
-        speed = 80.0; // Average road speed
-    }
-    
-    return route.distance / speed;
-}
-
-std::vector<std::string> PathFinder::reconstructPath(const std::vector<int>& previous, int start, int end) {
-    std::vector<std::string> path;
-    int current = end;
-    
-    while (current != -1) {
-        path.push_back(cities[current].name);
-        current = previous[current];
-    }
-    
-    std::reverse(path.begin(), path.end());
-    return path;
-}
-
-PathResult PathFinder::findShortestPath(const std::string& source, const std::string& destination, const std::string& algorithm) {
-    if (algorithm == "dijkstra") {
-        return dijkstraShortestPath(source, destination);
-    } else if (algorithm == "bellman-ford") {
-        return bellmanFordShortestPath(source, destination);
-    } else if (algorithm == "floyd-warshall") {
-        return floydWarshallShortestPath(source, destination);
-    } else if (algorithm == "a-star") {
-        return aStarShortestPath(source, destination);
-    } else {
-        std::cerr << "Unknown algorithm: " << algorithm << ". Using Dijkstra." << std::endl;
-        return dijkstraShortestPath(source, destination);
-    }
-}
-
-PathResult PathFinder::dijkstraShortestPath(const std::string& source, const std::string& destination) {
+PathResult PathfindingVisualizer::dijkstra(const std::string& source, const std::string& destination) {
     PathResult result;
-    result.algorithm_used = "Dijkstra";
+    result.algorithm = "Dijkstra";
     
     if (!cityExists(source) || !cityExists(destination)) {
-        std::cerr << "Source or destination city not found!" << std::endl;
         return result;
     }
     
-    int start = city_indices[source];
-    int end = city_indices[destination];
-    int n = cities.size();
+    std::map<std::string, double> distances;
+    std::map<std::string, std::string> previous;
+    std::set<std::string> unvisited;
     
-    std::vector<double> distances(n, std::numeric_limits<double>::infinity());
-    std::vector<int> previous(n, -1);
-    std::vector<bool> visited(n, false);
+    // Initialize distances
+    for (const auto& city : cities) {
+        distances[city.name] = std::numeric_limits<double>::infinity();
+        unvisited.insert(city.name);
+    }
+    distances[source] = 0.0;
     
-    distances[start] = 0;
-    
-    for (int i = 0; i < n; ++i) {
-        // Find unvisited vertex with minimum distance
-        int u = -1;
-        double min_dist = std::numeric_limits<double>::infinity();
+    while (!unvisited.empty()) {
+        std::string current = findMinDistanceCity(distances, unvisited);
         
-        for (int j = 0; j < n; ++j) {
-            if (!visited[j] && distances[j] < min_dist) {
-                min_dist = distances[j];
-                u = j;
-            }
-        }
-        
-        if (u == -1) break;
-        visited[u] = true;
-        
-        if (u == end) break;
-        
-        // Update distances to neighbors
-        for (int v = 0; v < n; ++v) {
-            if (!visited[v]) {
-                std::string from = cities[u].name;
-                std::string to = cities[v].name;
-                
-                if (routeExists(from, to)) {
-                    double weight = routes[{from, to}].distance;
-                    if (distances[u] + weight < distances[v]) {
-                        distances[v] = distances[u] + weight;
-                        previous[v] = u;
-                    }
-                }
-            }
-        }
-    }
-    
-    if (distances[end] == std::numeric_limits<double>::infinity()) {
-        std::cerr << "No path found from " << source << " to " << destination << std::endl;
-        return result;
-    }
-    
-    result.path = reconstructPath(previous, start, end);
-    result.total_distance = distances[end];
-    
-    // Calculate total time and route details
-    for (size_t i = 0; i < result.path.size() - 1; ++i) {
-        std::string from = result.path[i];
-        std::string to = result.path[i + 1];
-        
-        if (routeExists(from, to)) {
-            Route route = routes[{from, to}];
-            result.route_details.push_back(route);
-            result.total_time += route.time;
-        }
-    }
-    
-    return result;
-}
-
-PathResult PathFinder::bellmanFordShortestPath(const std::string& source, const std::string& destination) {
-    PathResult result;
-    result.algorithm_used = "Bellman-Ford";
-    
-    if (!cityExists(source) || !cityExists(destination)) {
-        std::cerr << "Source or destination city not found!" << std::endl;
-        return result;
-    }
-    
-    int start = city_indices[source];
-    int end = city_indices[destination];
-    int n = cities.size();
-    
-    std::vector<double> distances(n, std::numeric_limits<double>::infinity());
-    std::vector<int> previous(n, -1);
-    
-    distances[start] = 0;
-    
-    // Relax edges n-1 times
-    for (int i = 0; i < n - 1; ++i) {
-        for (const auto& route_pair : routes) {
-            const Route& route = route_pair.second;
-            int u = city_indices[route.from];
-            int v = city_indices[route.to];
-            
-            if (distances[u] != std::numeric_limits<double>::infinity() &&
-                distances[u] + route.distance < distances[v]) {
-                distances[v] = distances[u] + route.distance;
-                previous[v] = u;
-            }
-        }
-    }
-    
-    if (distances[end] == std::numeric_limits<double>::infinity()) {
-        std::cerr << "No path found from " << source << " to " << destination << std::endl;
-        return result;
-    }
-    
-    result.path = reconstructPath(previous, start, end);
-    result.total_distance = distances[end];
-    
-    // Calculate total time and route details
-    for (size_t i = 0; i < result.path.size() - 1; ++i) {
-        std::string from = result.path[i];
-        std::string to = result.path[i + 1];
-        
-        if (routeExists(from, to)) {
-            Route route = routes[{from, to}];
-            result.route_details.push_back(route);
-            result.total_time += route.time;
-        }
-    }
-    
-    return result;
-}
-
-PathResult PathFinder::floydWarshallShortestPath(const std::string& source, const std::string& destination) {
-    PathResult result;
-    result.algorithm_used = "Floyd-Warshall";
-    
-    if (!cityExists(source) || !cityExists(destination)) {
-        std::cerr << "Source or destination city not found!" << std::endl;
-        return result;
-    }
-    
-    int start = city_indices[source];
-    int end = city_indices[destination];
-    int n = cities.size();
-    
-    // Initialize distance and next matrices
-    std::vector<std::vector<double>> dist(n, std::vector<double>(n, std::numeric_limits<double>::infinity()));
-    std::vector<std::vector<int>> next(n, std::vector<int>(n, -1));
-    
-    // Set diagonal to 0 and initialize direct edges
-    for (int i = 0; i < n; ++i) {
-        dist[i][i] = 0;
-    }
-    
-    for (const auto& route_pair : routes) {
-        const Route& route = route_pair.second;
-        int u = city_indices[route.from];
-        int v = city_indices[route.to];
-        dist[u][v] = route.distance;
-        next[u][v] = v;
-    }
-    
-    // Floyd-Warshall algorithm
-    for (int k = 0; k < n; ++k) {
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (dist[i][k] != std::numeric_limits<double>::infinity() &&
-                    dist[k][j] != std::numeric_limits<double>::infinity() &&
-                    dist[i][k] + dist[k][j] < dist[i][j]) {
-                    dist[i][j] = dist[i][k] + dist[k][j];
-                    next[i][j] = next[i][k];
-                }
-            }
-        }
-    }
-    
-    if (dist[start][end] == std::numeric_limits<double>::infinity()) {
-        std::cerr << "No path found from " << source << " to " << destination << std::endl;
-        return result;
-    }
-    
-    // Reconstruct path
-    std::vector<std::string> path;
-    int current = start;
-    while (current != end) {
-        path.push_back(cities[current].name);
-        current = next[current][end];
-    }
-    path.push_back(cities[end].name);
-    
-    result.path = path;
-    result.total_distance = dist[start][end];
-    
-    // Calculate total time and route details
-    for (size_t i = 0; i < result.path.size() - 1; ++i) {
-        std::string from = result.path[i];
-        std::string to = result.path[i + 1];
-        
-        if (routeExists(from, to)) {
-            Route route = routes[{from, to}];
-            result.route_details.push_back(route);
-            result.total_time += route.time;
-        }
-    }
-    
-    return result;
-}
-
-PathResult PathFinder::aStarShortestPath(const std::string& source, const std::string& destination) {
-    PathResult result;
-    result.algorithm_used = "A*";
-    
-    if (!cityExists(source) || !cityExists(destination)) {
-        std::cerr << "Source or destination city not found!" << std::endl;
-        return result;
-    }
-    
-    int start = city_indices[source];
-    int end = city_indices[destination];
-    int n = cities.size();
-    
-    std::vector<double> g_score(n, std::numeric_limits<double>::infinity());
-    std::vector<double> f_score(n, std::numeric_limits<double>::infinity());
-    std::vector<int> previous(n, -1);
-    std::set<int> open_set;
-    
-    g_score[start] = 0;
-    f_score[start] = getHeuristicDistance(source, destination);
-    open_set.insert(start);
-    
-    while (!open_set.empty()) {
-        // Find node with lowest f_score
-        int current = -1;
-        double min_f = std::numeric_limits<double>::infinity();
-        
-        for (int node : open_set) {
-            if (f_score[node] < min_f) {
-                min_f = f_score[node];
-                current = node;
-            }
-        }
-        
-        if (current == end) {
+        if (current == destination) {
             break;
         }
         
-        open_set.erase(current);
+        unvisited.erase(current);
         
-        // Check neighbors
-        std::vector<std::string> neighbors = getNeighbors(cities[current].name);
-        for (const std::string& neighbor_name : neighbors) {
-            int neighbor = city_indices[neighbor_name];
-            
-            if (!routeExists(cities[current].name, neighbor_name)) continue;
-            
-            double tentative_g = g_score[current] + routes[{cities[current].name, neighbor_name}].distance;
-            
-            if (tentative_g < g_score[neighbor]) {
-                previous[neighbor] = current;
-                g_score[neighbor] = tentative_g;
-                f_score[neighbor] = g_score[neighbor] + getHeuristicDistance(neighbor_name, destination);
-                
-                if (open_set.find(neighbor) == open_set.end()) {
-                    open_set.insert(neighbor);
+        for (const auto& neighbor : graph[current]) {
+            if (unvisited.find(neighbor.first) != unvisited.end()) {
+                double newDistance = distances[current] + neighbor.second.distance;
+                if (newDistance < distances[neighbor.first]) {
+                    distances[neighbor.first] = newDistance;
+                    previous[neighbor.first] = current;
                 }
             }
         }
     }
     
-    if (g_score[end] == std::numeric_limits<double>::infinity()) {
-        std::cerr << "No path found from " << source << " to " << destination << std::endl;
-        return result;
-    }
-    
-    result.path = reconstructPath(previous, start, end);
-    result.total_distance = g_score[end];
-    
-    // Calculate total time and route details
-    for (size_t i = 0; i < result.path.size() - 1; ++i) {
-        std::string from = result.path[i];
-        std::string to = result.path[i + 1];
-        
-        if (routeExists(from, to)) {
-            Route route = routes[{from, to}];
-            result.route_details.push_back(route);
-            result.total_time += route.time;
-        }
+    // Reconstruct path
+    result.path = reconstructPath(previous, source, destination);
+    if (!result.path.empty()) {
+        result.totalDistance = distances[destination];
+        result.totalTime = calculateTotalTime(result.path);
+        result.routeDetails = getRouteDetails(result.path);
     }
     
     return result;
 }
 
-std::vector<PathResult> PathFinder::compareAlgorithms(const std::string& source, const std::string& destination) {
+PathResult PathfindingVisualizer::breadthFirstSearch(const std::string& source, const std::string& destination) {
+    PathResult result;
+    result.algorithm = "BFS";
+    
+    if (!cityExists(source) || !cityExists(destination)) {
+        return result;
+    }
+    
+    std::map<std::string, std::string> previous;
+    std::map<std::string, bool> visited;
+    std::queue<std::string> queue;
+    
+    // Initialize visited map
+    for (const auto& city : cities) {
+        visited[city.name] = false;
+    }
+    
+    queue.push(source);
+    visited[source] = true;
+    
+    while (!queue.empty()) {
+        std::string current = queue.front();
+        queue.pop();
+        
+        if (current == destination) {
+            break;
+        }
+        
+        for (const auto& neighbor : graph[current]) {
+            if (!visited[neighbor.first]) {
+                visited[neighbor.first] = true;
+                previous[neighbor.first] = current;
+                queue.push(neighbor.first);
+            }
+        }
+    }
+    
+    // Reconstruct path
+    result.path = reconstructPath(previous, source, destination);
+    if (!result.path.empty()) {
+        result.totalDistance = calculateTotalDistance(result.path);
+        result.totalTime = calculateTotalTime(result.path);
+        result.routeDetails = getRouteDetails(result.path);
+    }
+    
+    return result;
+}
+
+PathResult PathfindingVisualizer::depthFirstSearch(const std::string& source, const std::string& destination) {
+    PathResult result;
+    result.algorithm = "DFS";
+    
+    if (!cityExists(source) || !cityExists(destination)) {
+        return result;
+    }
+    
+    std::map<std::string, bool> visited;
+    std::map<std::string, std::string> previous;
+    bool found = false;
+    
+    // Initialize visited map
+    for (const auto& city : cities) {
+        visited[city.name] = false;
+    }
+    
+    // Start DFS from source
+    dfsHelper(source, destination, visited, previous, found);
+    
+    // Reconstruct path if found
+    if (found) {
+        result.path = reconstructPath(previous, source, destination);
+        result.totalDistance = calculateTotalDistance(result.path);
+        result.totalTime = calculateTotalTime(result.path);
+        result.routeDetails = getRouteDetails(result.path);
+    }
+    
+    return result;
+}
+
+std::vector<PathResult> PathfindingVisualizer::compareAlgorithms(const std::string& source, const std::string& destination) {
     std::vector<PathResult> results;
     
-    std::vector<std::string> algorithms = {"dijkstra", "bellman-ford", "floyd-warshall", "a-star"};
-    
-    for (const std::string& algo : algorithms) {
-        PathResult result = findShortestPath(source, destination, algo);
-        results.push_back(result);
-    }
+    results.push_back(dijkstra(source, destination));
+    results.push_back(breadthFirstSearch(source, destination));
+    results.push_back(depthFirstSearch(source, destination));
     
     return results;
 }
 
-void PathFinder::analyzeNetwork() {
-    std::cout << "\n=== Network Analysis ===" << std::endl;
-    std::cout << "Cities: " << cities.size() << std::endl;
-    std::cout << "Routes: " << routes.size() / 2 << " (bidirectional)" << std::endl;
+double PathfindingVisualizer::calculateHeuristic(const std::string& city1, const std::string& city2) {
+    // Find city coordinates
+    double lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0;
     
-    // Find most connected city
-    std::map<std::string, int> connections;
-    for (const auto& route_pair : routes) {
-        connections[route_pair.second.from]++;
-    }
-    
-    auto max_connections = std::max_element(connections.begin(), connections.end(),
-        [](const auto& a, const auto& b) { return a.second < b.second; });
-    
-    if (max_connections != connections.end()) {
-        std::cout << "Most connected city: " << max_connections->first 
-                  << " (" << max_connections->second << " connections)" << std::endl;
-    }
-}
-
-std::map<std::string, double> PathFinder::getCityDistances(const std::string& source) {
-    std::map<std::string, double> distances;
-    
-    for (const City& city : cities) {
-        if (city.name != source) {
-            PathResult result = dijkstraShortestPath(source, city.name);
-            distances[city.name] = result.total_distance;
+    for (const auto& city : cities) {
+        if (city.name == city1) {
+            lat1 = city.latitude;
+            lon1 = city.longitude;
+        }
+        if (city.name == city2) {
+            lat2 = city.latitude;
+            lon2 = city.longitude;
         }
     }
     
-    return distances;
+    return haversineDistance(lat1, lon1, lat2, lon2);
 }
 
-bool PathFinder::cityExists(const std::string& name) const {
-    return city_indices.find(name) != city_indices.end();
-}
-
-bool PathFinder::routeExists(const std::string& from, const std::string& to) const {
-    return routes.find({from, to}) != routes.end();
-}
-
-double PathFinder::getHeuristicDistance(const std::string& from, const std::string& to) {
-    if (!cityExists(from) || !cityExists(to)) {
-        return std::numeric_limits<double>::infinity();
-    }
-    
-    const City& city1 = cities[city_indices.at(from)];
-    const City& city2 = cities[city_indices.at(to)];
-    
-    return calculateDistance(city1, city2);
-}
-
-std::vector<std::string> PathFinder::getNeighbors(const std::string& city) {
+std::vector<std::string> PathfindingVisualizer::getNeighbors(const std::string& city) {
     std::vector<std::string> neighbors;
     
-    for (const auto& route_pair : routes) {
-        if (route_pair.second.from == city) {
-            neighbors.push_back(route_pair.second.to);
+    if (graph.find(city) != graph.end()) {
+        for (const auto& neighbor : graph[city]) {
+            neighbors.push_back(neighbor.first);
         }
     }
     
     return neighbors;
 }
 
-void PathFinder::exportPathToFile(const PathResult& result, const std::string& filename) {
-    std::ofstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Error: Could not create file " << filename << std::endl;
+bool PathfindingVisualizer::cityExists(const std::string& cityName) {
+    for (const auto& city : cities) {
+        if (city.name == cityName) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void PathfindingVisualizer::printPath(const PathResult& result) {
+    if (result.path.empty()) {
+        std::cout << "No path found!" << std::endl;
         return;
     }
     
-    file << "Pathfinding Result Report" << std::endl;
-    file << "=========================" << std::endl;
-    file << "Algorithm: " << result.algorithm_used << std::endl;
-    file << "Total Distance: " << std::fixed << std::setprecision(2) << result.total_distance << " km" << std::endl;
-    file << "Total Time: " << std::fixed << std::setprecision(2) << result.total_time << " hours" << std::endl;
-    file << std::endl;
-    
-    file << "Path:" << std::endl;
+    std::cout << "Algorithm: " << result.algorithm << std::endl;
+    std::cout << "Path: ";
     for (size_t i = 0; i < result.path.size(); ++i) {
-        file << (i + 1) << ". " << result.path[i];
+        std::cout << result.path[i];
         if (i < result.path.size() - 1) {
-            file << " -> ";
+            std::cout << " -> ";
         }
     }
-    file << std::endl << std::endl;
+    std::cout << std::endl;
+    std::cout << "Total Distance: " << result.totalDistance << " km" << std::endl;
+    std::cout << "Total Time: " << result.totalTime << " hours" << std::endl;
+    std::cout << "Route Details:" << std::endl;
     
-    file << "Route Details:" << std::endl;
-    for (size_t i = 0; i < result.route_details.size(); ++i) {
-        const Route& route = result.route_details[i];
-        file << (i + 1) << ". " << route.from << " to " << route.to << std::endl;
-        file << "   Distance: " << std::fixed << std::setprecision(2) << route.distance << " km" << std::endl;
-        file << "   Time: " << std::fixed << std::setprecision(2) << route.time << " hours" << std::endl;
-        file << "   Transport: " << route.transport_type << std::endl;
-        file << std::endl;
+    for (const auto& route : result.routeDetails) {
+        std::cout << "  " << route.from << " to " << route.to 
+                  << " (" << route.transport << "): " 
+                  << route.distance << " km, " << route.time << " hours" << std::endl;
     }
-    
-    file.close();
-    std::cout << "Path exported to " << filename << std::endl;
 }
 
-void PathFinder::exportNetworkToFile(const std::string& filename) {
+void PathfindingVisualizer::exportResults(const std::vector<PathResult>& results, const std::string& filename) {
     std::ofstream file(filename);
     if (!file.is_open()) {
-        std::cerr << "Error: Could not create file " << filename << std::endl;
+        std::cerr << "Error opening file: " << filename << std::endl;
         return;
     }
     
-    file << "City Network Data" << std::endl;
-    file << "=================" << std::endl;
+    file << "Pathfinding Algorithm Comparison Results\n";
+    file << "=======================================\n\n";
     
-    file << "Cities:" << std::endl;
-    for (const City& city : cities) {
-        file << city.name << "," << city.latitude << "," << city.longitude << "," << city.population << std::endl;
-    }
-    
-    file << std::endl << "Routes:" << std::endl;
-    for (const auto& route_pair : routes) {
-        const Route& route = route_pair.second;
-        file << route.from << "," << route.to << "," << route.distance << "," << route.time << "," << route.transport_type << std::endl;
+    for (const auto& result : results) {
+        file << "Algorithm: " << result.algorithm << "\n";
+        file << "Path: ";
+        for (size_t i = 0; i < result.path.size(); ++i) {
+            file << result.path[i];
+            if (i < result.path.size() - 1) file << " -> ";
+        }
+        file << "\n";
+        file << "Total Distance: " << result.totalDistance << " km\n";
+        file << "Total Time: " << result.totalTime << " hours\n\n";
     }
     
     file.close();
-    std::cout << "Network exported to " << filename << std::endl;
 }
 
-std::string PathFinder::generatePathReport(const PathResult& result) {
-    std::ostringstream report;
+void PathfindingVisualizer::loadCitiesFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error opening cities file: " << filename << std::endl;
+        return;
+    }
     
-    report << "Pathfinding Report" << std::endl;
-    report << "==================" << std::endl;
-    report << "Algorithm: " << result.algorithm_used << std::endl;
-    report << "Total Distance: " << std::fixed << std::setprecision(2) << result.total_distance << " km" << std::endl;
-    report << "Total Time: " << std::fixed << std::setprecision(2) << result.total_time << " hours" << std::endl;
-    report << std::endl;
+    cities.clear();
+    std::string line;
     
-    report << "Path: ";
-    for (size_t i = 0; i < result.path.size(); ++i) {
-        report << result.path[i];
-        if (i < result.path.size() - 1) {
-            report << " -> ";
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string name;
+        double lat, lon;
+        int pop;
+        
+        if (iss >> name >> lat >> lon >> pop) {
+            cities.emplace_back(name, lat, lon, pop);
         }
     }
-    report << std::endl;
     
-    return report.str();
+    file.close();
+    buildGraph();
+}
+
+void PathfindingVisualizer::loadRoutesFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error opening routes file: " << filename << std::endl;
+        return;
+    }
+    
+    routes.clear();
+    std::string line;
+    
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string from, to, transport;
+        double distance, time;
+        
+        if (iss >> from >> to >> distance >> time >> transport) {
+            routes.emplace_back(from, to, distance, time, transport);
+        }
+    }
+    
+    file.close();
+    buildGraph();
+}
+
+void PathfindingVisualizer::analyzeGraphProperties() {
+    std::cout << "Graph Analysis:\n";
+    std::cout << "Cities: " << cities.size() << std::endl;
+    std::cout << "Routes: " << routes.size() << std::endl;
+    
+    int totalConnections = 0;
+    for (const auto& city : graph) {
+        totalConnections += city.second.size();
+    }
+    
+    std::cout << "Total connections: " << totalConnections << std::endl;
+    std::cout << "Average connections per city: " 
+              << (double)totalConnections / cities.size() << std::endl;
+}
+
+void PathfindingVisualizer::findConnectedComponents() {
+    std::map<std::string, bool> visited;
+    std::vector<std::vector<std::string>> components;
+    
+    // Initialize visited map
+    for (const auto& city : cities) {
+        visited[city.name] = false;
+    }
+    
+    // DFS to find connected components
+    for (const auto& city : cities) {
+        if (!visited[city.name]) {
+            std::vector<std::string> component;
+            std::stack<std::string> stack;
+            
+            stack.push(city.name);
+            visited[city.name] = true;
+            
+            while (!stack.empty()) {
+                std::string current = stack.top();
+                stack.pop();
+                component.push_back(current);
+                
+                for (const auto& neighbor : graph[current]) {
+                    if (!visited[neighbor.first]) {
+                        visited[neighbor.first] = true;
+                        stack.push(neighbor.first);
+                    }
+                }
+            }
+            
+            components.push_back(component);
+        }
+    }
+    
+    std::cout << "Connected Components: " << components.size() << std::endl;
+    for (size_t i = 0; i < components.size(); ++i) {
+        std::cout << "Component " << (i + 1) << " (" << components[i].size() << " cities): ";
+        for (const auto& city : components[i]) {
+            std::cout << city << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+void PathfindingVisualizer::calculateAveragePathLength() {
+    double totalLength = 0.0;
+    int pathCount = 0;
+    
+    for (size_t i = 0; i < cities.size(); ++i) {
+        for (size_t j = i + 1; j < cities.size(); ++j) {
+            PathResult result = dijkstra(cities[i].name, cities[j].name);
+            if (!result.path.empty()) {
+                totalLength += result.totalDistance;
+                pathCount++;
+            }
+        }
+    }
+    
+    if (pathCount > 0) {
+        std::cout << "Average shortest path length: " 
+                  << (totalLength / pathCount) << " km" << std::endl;
+    }
+}
+
+// Private helper functions
+std::string PathfindingVisualizer::findMinDistanceCity(const std::map<std::string, double>& distances, 
+                                                      const std::set<std::string>& unvisited) {
+    std::string minCity;
+    double minDistance = std::numeric_limits<double>::infinity();
+    
+    for (const auto& city : unvisited) {
+        if (distances.at(city) < minDistance) {
+            minDistance = distances.at(city);
+            minCity = city;
+        }
+    }
+    
+    return minCity;
+}
+
+std::vector<std::string> PathfindingVisualizer::reconstructPath(const std::map<std::string, std::string>& previous,
+                                                               const std::string& source, 
+                                                               const std::string& destination) {
+    std::vector<std::string> path;
+    
+    if (previous.find(destination) == previous.end()) {
+        return path; // No path found
+    }
+    
+    std::string current = destination;
+    while (current != source) {
+        path.push_back(current);
+        current = previous.at(current);
+    }
+    path.push_back(source);
+    
+    std::reverse(path.begin(), path.end());
+    return path;
+}
+
+double PathfindingVisualizer::haversineDistance(double lat1, double lon1, double lat2, double lon2) {
+    const double R = 6371.0; // Earth's radius in kilometers
+    
+    double dLat = (lat2 - lat1) * M_PI / 180.0;
+    double dLon = (lon2 - lon1) * M_PI / 180.0;
+    
+    double a = sin(dLat / 2) * sin(dLat / 2) +
+               cos(lat1 * M_PI / 180.0) * cos(lat2 * M_PI / 180.0) *
+               sin(dLon / 2) * sin(dLon / 2);
+    
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    
+    return R * c;
+}
+
+// Additional helper functions for path calculations
+double PathfindingVisualizer::calculateTotalDistance(const std::vector<std::string>& path) {
+    double total = 0.0;
+    for (size_t i = 0; i < path.size() - 1; ++i) {
+        if (graph[path[i]].find(path[i + 1]) != graph[path[i]].end()) {
+            total += graph[path[i]][path[i + 1]].distance;
+        }
+    }
+    return total;
+}
+
+double PathfindingVisualizer::calculateTotalTime(const std::vector<std::string>& path) {
+    double total = 0.0;
+    for (size_t i = 0; i < path.size() - 1; ++i) {
+        if (graph[path[i]].find(path[i + 1]) != graph[path[i]].end()) {
+            total += graph[path[i]][path[i + 1]].time;
+        }
+    }
+    return total;
+}
+
+std::vector<Route> PathfindingVisualizer::getRouteDetails(const std::vector<std::string>& path) {
+    std::vector<Route> details;
+    for (size_t i = 0; i < path.size() - 1; ++i) {
+        if (graph[path[i]].find(path[i + 1]) != graph[path[i]].end()) {
+            details.push_back(graph[path[i]][path[i + 1]]);
+        }
+    }
+    return details;
+}
+
+void PathfindingVisualizer::dfsHelper(const std::string& current, const std::string& destination, 
+                                     std::map<std::string, bool>& visited, 
+                                     std::map<std::string, std::string>& previous,
+                                     bool& found) {
+    if (found) return; // Stop if path already found
+    
+    visited[current] = true;
+    
+    if (current == destination) {
+        found = true;
+        return;
+    }
+    
+    // Explore all neighbors
+    for (const auto& neighbor : graph[current]) {
+        if (!visited[neighbor.first] && !found) {
+            previous[neighbor.first] = current;
+            dfsHelper(neighbor.first, destination, visited, previous, found);
+        }
+    }
 }
