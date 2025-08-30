@@ -34,7 +34,7 @@ public:
         std::cout << std::endl;
     }
     
-    // Bubble Sort - O(n²)
+
     void bubbleSort() {
         comparisons = 0;
         swaps = 0;
@@ -177,7 +177,62 @@ public:
             }
         }
     }
+
+    // Heap Sort - O(n log n)
+    void heapSort() {
+        comparisons = 0;
+        swaps = 0;
+        int n = array.size();
+        
+        // Build max heap
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            heapify(n, i);
+        }
+        
+        // Extract elements from heap one by one
+        for (int i = n - 1; i > 0; i--) {
+            // Move current root to end
+            std::swap(array[0], array[i]);
+            swaps++;
+            
+            // Call heapify on the reduced heap
+            heapify(i, 0);
+        }
+    }
+
+private:
+    void heapify(int n, int i) {
+        int largest = i;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        
+        // Compare with left child
+        if (left < n) {
+            comparisons++;
+            if (array[left] > array[largest]) {
+                largest = left;
+            }
+        }
+        
+        // Compare with right child
+        if (right < n) {
+            comparisons++;
+            if (array[right] > array[largest]) {
+                largest = right;
+            }
+        }
+        
+        // If largest is not root
+        if (largest != i) {
+            std::swap(array[i], array[largest]);
+            swaps++;
+            
+            // Recursively heapify the affected sub-tree
+            heapify(n, largest);
+        }
+    }
     
+public:
     // Getter methods
     int getComparisons() const { return comparisons; }
     int getSwaps() const { return swaps; }
@@ -218,7 +273,8 @@ int main() {
             {"Quick Sort", [&]() { visualizer.quickSort(); }},
             {"Merge Sort", [&]() { visualizer.mergeSort(); }},
             {"Insertion Sort", [&]() { visualizer.insertionSort(); }},
-            {"Selection Sort", [&]() { visualizer.selectionSort(); }}
+            {"Selection Sort", [&]() { visualizer.selectionSort(); }},
+            {"Heap Sort", [&]() { visualizer.heapSort(); }}
         };
         
         for (const auto& algorithm : algorithms) {

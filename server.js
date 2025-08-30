@@ -9,7 +9,7 @@ const path = require('path');
 const url = require('url');
 
 // Configuration
-const PORT = 3000;
+const PORT = 3000 || "https://sorting-visualizer-ggxr.onrender.com";
 const DIRECTORY = 'frontend';
 
 // MIME types for different file extensions

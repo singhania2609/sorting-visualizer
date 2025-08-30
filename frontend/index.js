@@ -82,6 +82,9 @@ class SortingVisualizer {
                 case 'selection':
                     this.selectionSort();
                     break;
+                case 'heap':
+                    this.heapSort();
+                    break;
                 default:
                     throw new Error(`Unknown algorithm: ${algorithm}`);
             }
@@ -229,6 +232,59 @@ class SortingVisualizer {
         }
     }
 
+    heapSort() {
+        const arr = [...this.array];
+        const n = arr.length;
+        
+        // Build max heap
+        for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+            this.heapify(arr, n, i);
+        }
+        
+        // Extract elements from heap one by one
+        for (let i = n - 1; i > 0; i--) {
+            // Move current root to end
+            [arr[0], arr[i]] = [arr[i], arr[0]];
+            this.swaps++;
+            this.steps.push([...arr]);
+            
+            // Call heapify on the reduced heap
+            this.heapify(arr, i, 0);
+        }
+    }
+
+    heapify(arr, n, i) {
+        let largest = i;
+        const left = 2 * i + 1;
+        const right = 2 * i + 2;
+        
+        // Compare with left child
+        if (left < n) {
+            this.comparisons++;
+            if (arr[left] > arr[largest]) {
+                largest = left;
+            }
+        }
+        
+        // Compare with right child
+        if (right < n) {
+            this.comparisons++;
+            if (arr[right] > arr[largest]) {
+                largest = right;
+            }
+        }
+        
+        // If largest is not root
+        if (largest !== i) {
+            [arr[i], arr[largest]] = [arr[largest], arr[i]];
+            this.swaps++;
+            this.steps.push([...arr]);
+            
+            // Recursively heapify the affected sub-tree
+            this.heapify(arr, n, largest);
+        }
+    }
+
     animateSteps() {
         if (this.currentStep >= this.steps.length) {
             this.isRunning = false;
@@ -289,6 +345,9 @@ class SortingVisualizer {
                 break;
             case 'selection':
                 this.selectionSort();
+                break;
+            case 'heap':
+                this.heapSort();
                 break;
         }
     }
