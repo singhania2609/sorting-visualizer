@@ -9,66 +9,66 @@
 PathfindingVisualizer::PathfindingVisualizer() {
     // Initialize with Indian cities
     cities = {
-        {"Mumbai", 19.0760, 72.8777, 20411274},
-        {"Delhi", 28.7041, 77.1025, 16787941},
-        {"Bangalore", 12.9716, 77.5946, 12479914},
-        {"Hyderabad", 17.3850, 78.4867, 10493900},
-        {"Chennai", 13.0827, 80.2707, 7088000},
-        {"Kolkata", 22.5726, 88.3639, 14916388},
-        {"Pune", 18.5204, 73.8567, 3124458},
-        {"Ahmedabad", 23.0225, 72.5714, 5577940},
-        {"Jaipur", 26.9124, 75.7873, 3073350},
-        {"Surat", 21.1702, 72.8311, 4467797},
-        {"Lucknow", 26.8467, 80.9462, 3382000},
-        {"Kanpur", 26.4499, 80.3319, 2767031},
-        {"Nagpur", 21.1458, 79.0882, 2405665},
-        {"Indore", 22.7196, 75.8577, 1994391},
-        {"Thane", 19.2183, 72.9781, 1841488},
-        {"Bhopal", 23.2599, 77.4126, 1798218},
-        {"Visakhapatnam", 17.6868, 83.2185, 1728128},
-        {"Pimpri-Chinchwad", 18.6298, 73.7997, 1726292},
-        {"Patna", 25.5941, 85.1376, 2046652},
-        {"Vadodara", 22.3072, 73.1812, 1670806}
+        {"Mumbai", 19.0760, 72.8777},
+        {"Delhi", 28.7041, 77.1025},
+        {"Bangalore", 12.9716, 77.5946},
+        {"Hyderabad", 17.3850, 78.4867},
+        {"Chennai", 13.0827, 80.2707},
+        {"Kolkata", 22.5726, 88.3639},
+        {"Pune", 18.5204, 73.8567},
+        {"Ahmedabad", 23.0225, 72.5714},
+        {"Jaipur", 26.9124, 75.7873},
+        {"Surat", 21.1702, 72.8311},
+        {"Lucknow", 26.8467, 80.9462},
+        {"Kanpur", 26.4499, 80.3319},
+        {"Nagpur", 21.1458, 79.0882},
+        {"Indore", 22.7196, 75.8577},
+        {"Thane", 19.2183, 72.9781},
+        {"Bhopal", 23.2599, 77.4126},
+        {"Visakhapatnam", 17.6868, 83.2185},
+        {"Pimpri-Chinchwad", 18.6298, 73.7997},
+        {"Patna", 25.5941, 85.1376},
+        {"Vadodara", 22.3072, 73.1812}
     };
     
-    // Initialize routes between cities
+    // Initialize routes between cities (simplified without transport modes)
     routes = {
-        {"Mumbai", "Delhi", 1150.0, 2.0, "air"},
-        {"Mumbai", "Bangalore", 845.0, 1.5, "air"},
-        {"Mumbai", "Hyderabad", 710.0, 1.2, "air"},
-        {"Mumbai", "Chennai", 1035.0, 1.8, "air"},
-        {"Mumbai", "Kolkata", 1650.0, 2.5, "air"},
-        {"Delhi", "Bangalore", 1750.0, 2.8, "air"},
-        {"Delhi", "Hyderabad", 1580.0, 2.5, "air"},
-        {"Delhi", "Chennai", 1760.0, 2.8, "air"},
-        {"Delhi", "Kolkata", 1300.0, 2.0, "air"},
-        {"Bangalore", "Hyderabad", 570.0, 1.0, "air"},
-        {"Bangalore", "Chennai", 350.0, 0.8, "air"},
-        {"Bangalore", "Kolkata", 1550.0, 2.5, "air"},
-        {"Hyderabad", "Chennai", 625.0, 1.1, "air"},
-        {"Hyderabad", "Kolkata", 1200.0, 2.0, "air"},
-        {"Chennai", "Kolkata", 1660.0, 2.7, "air"},
-        {"Mumbai", "Pune", 150.0, 3.0, "road"},
-        {"Mumbai", "Ahmedabad", 530.0, 8.0, "road"},
-        {"Delhi", "Jaipur", 280.0, 5.0, "road"},
-        {"Delhi", "Lucknow", 500.0, 8.0, "road"},
-        {"Delhi", "Kanpur", 450.0, 7.0, "road"},
-        {"Bangalore", "Mysore", 150.0, 3.0, "road"},
-        {"Hyderabad", "Vijayawada", 280.0, 5.0, "road"},
-        {"Chennai", "Vellore", 130.0, 2.5, "road"},
-        {"Kolkata", "Howrah", 10.0, 0.5, "road"},
-        {"Pune", "Mumbai", 150.0, 3.0, "road"},
-        {"Ahmedabad", "Surat", 280.0, 5.0, "road"},
-        {"Jaipur", "Delhi", 280.0, 5.0, "road"},
-        {"Lucknow", "Kanpur", 80.0, 1.5, "road"},
-        {"Nagpur", "Bhopal", 320.0, 6.0, "road"},
-        {"Indore", "Bhopal", 190.0, 3.5, "road"},
-        {"Thane", "Mumbai", 25.0, 1.0, "road"},
-        {"Bhopal", "Indore", 190.0, 3.5, "road"},
-        {"Visakhapatnam", "Vijayawada", 350.0, 6.0, "road"},
-        {"Pimpri-Chinchwad", "Pune", 15.0, 0.5, "road"},
-        {"Patna", "Varanasi", 250.0, 5.0, "road"},
-        {"Vadodara", "Ahmedabad", 110.0, 2.0, "road"}
+        {"Mumbai", "Delhi", 1150.0, 2.0},
+        {"Mumbai", "Bangalore", 845.0, 1.5},
+        {"Mumbai", "Hyderabad", 710.0, 1.2},
+        {"Mumbai", "Chennai", 1035.0, 1.8},
+        {"Mumbai", "Kolkata", 1650.0, 2.5},
+        {"Delhi", "Bangalore", 1750.0, 2.8},
+        {"Delhi", "Hyderabad", 1580.0, 2.5},
+        {"Delhi", "Chennai", 1760.0, 2.8},
+        {"Delhi", "Kolkata", 1300.0, 2.0},
+        {"Bangalore", "Hyderabad", 570.0, 1.0},
+        {"Bangalore", "Chennai", 350.0, 0.8},
+        {"Bangalore", "Kolkata", 1550.0, 2.5},
+        {"Hyderabad", "Chennai", 625.0, 1.1},
+        {"Hyderabad", "Kolkata", 1200.0, 2.0},
+        {"Chennai", "Kolkata", 1660.0, 2.7},
+        {"Mumbai", "Pune", 150.0, 3.0},
+        {"Mumbai", "Ahmedabad", 530.0, 8.0},
+        {"Delhi", "Jaipur", 280.0, 5.0},
+        {"Delhi", "Lucknow", 500.0, 8.0},
+        {"Delhi", "Kanpur", 450.0, 7.0},
+        {"Bangalore", "Mysore", 150.0, 3.0},
+        {"Hyderabad", "Vijayawada", 280.0, 5.0},
+        {"Chennai", "Vellore", 130.0, 2.5},
+        {"Kolkata", "Howrah", 10.0, 0.5},
+        {"Pune", "Mumbai", 150.0, 3.0},
+        {"Ahmedabad", "Surat", 280.0, 5.0},
+        {"Jaipur", "Delhi", 280.0, 5.0},
+        {"Lucknow", "Kanpur", 80.0, 1.5},
+        {"Nagpur", "Bhopal", 320.0, 6.0},
+        {"Indore", "Bhopal", 190.0, 3.5},
+        {"Thane", "Mumbai", 25.0, 1.0},
+        {"Bhopal", "Indore", 190.0, 3.5},
+        {"Visakhapatnam", "Vijayawada", 350.0, 6.0},
+        {"Pimpri-Chinchwad", "Pune", 15.0, 0.5},
+        {"Patna", "Varanasi", 250.0, 5.0},
+        {"Vadodara", "Ahmedabad", 110.0, 2.0}
     };
     
     buildGraph();
@@ -86,7 +86,7 @@ void PathfindingVisualizer::buildGraph() {
     for (const auto& route : routes) {
         graph[route.from][route.to] = route;
         // Add reverse route for undirected graph
-        Route reverseRoute(route.to, route.from, route.distance, route.time, route.transport);
+        Route reverseRoute(route.to, route.from, route.distance, route.time);
         graph[route.to][route.from] = reverseRoute;
     }
 }
@@ -100,7 +100,7 @@ void PathfindingVisualizer::addRoute(const Route& route) {
     routes.push_back(route);
     graph[route.from][route.to] = route;
     // Add reverse route for undirected graph
-    Route reverseRoute(route.to, route.from, route.distance, route.time, route.transport);
+    Route reverseRoute(route.to, route.from, route.distance, route.time);
     graph[route.to][route.from] = reverseRoute;
 }
 
@@ -303,8 +303,7 @@ void PathfindingVisualizer::printPath(const PathResult& result) {
     
     for (const auto& route : result.routeDetails) {
         std::cout << "  " << route.from << " to " << route.to 
-                  << " (" << route.transport << "): " 
-                  << route.distance << " km, " << route.time << " hours" << std::endl;
+                  << ": " << route.distance << " km, " << route.time << " hours" << std::endl;
     }
 }
 
@@ -347,10 +346,9 @@ void PathfindingVisualizer::loadCitiesFromFile(const std::string& filename) {
         std::istringstream iss(line);
         std::string name;
         double lat, lon;
-        int pop;
         
-        if (iss >> name >> lat >> lon >> pop) {
-            cities.emplace_back(name, lat, lon, pop);
+        if (iss >> name >> lat >> lon) {
+            cities.emplace_back(name, lat, lon);
         }
     }
     
@@ -370,11 +368,11 @@ void PathfindingVisualizer::loadRoutesFromFile(const std::string& filename) {
     
     while (std::getline(file, line)) {
         std::istringstream iss(line);
-        std::string from, to, transport;
+        std::string from, to;
         double distance, time;
         
-        if (iss >> from >> to >> distance >> time >> transport) {
-            routes.emplace_back(from, to, distance, time, transport);
+        if (iss >> from >> to >> distance >> time) {
+            routes.emplace_back(from, to, distance, time);
         }
     }
     

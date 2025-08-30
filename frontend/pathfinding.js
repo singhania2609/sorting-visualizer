@@ -1,82 +1,82 @@
 class PathfindingVisualizer {
     constructor() {
         this.cities = [
-            { name: "Mumbai", lat: 19.0760, lon: 72.8777, population: 20411274 },
-            { name: "Delhi", lat: 28.7041, lon: 77.1025, population: 16787941 },
-            { name: "Bangalore", lat: 12.9716, lon: 77.5946, population: 12479914 },
-            { name: "Hyderabad", lat: 17.3850, lon: 78.4867, population: 10469000 },
-            { name: "Chennai", lat: 13.0827, lon: 80.2707, population: 7088000 },
-            { name: "Kolkata", lat: 22.5726, lon: 88.3639, population: 14916388 },
-            { name: "Pune", lat: 18.5204, lon: 73.8567, population: 3124458 },
-            { name: "Ahmedabad", lat: 23.0225, lon: 72.5714, population: 5570585 },
-            { name: "Jaipur", lat: 26.9124, lon: 75.7873, population: 3073350 },
-            { name: "Surat", lat: 21.1702, lon: 72.8311, population: 4467797 },
-            { name: "Lucknow", lat: 26.8467, lon: 80.9462, population: 3382000 },
-            { name: "Kanpur", lat: 26.4499, lon: 80.3319, population: 2767031 },
-            { name: "Nagpur", lat: 21.1458, lon: 79.0882, population: 2405665 },
-            { name: "Indore", lat: 22.7196, lon: 75.8577, population: 1994397 },
-            { name: "Thane", lat: 19.2183, lon: 72.9781, population: 1841488 },
-            { name: "Bhopal", lat: 23.2599, lon: 77.4126, population: 1798218 },
-            { name: "Visakhapatnam", lat: 17.6868, lon: 83.2185, population: 1728128 },
-            { name: "Patna", lat: 25.5941, lon: 85.1376, population: 2046652 },
-            { name: "Vadodara", lat: 22.3072, lon: 73.1812, population: 1670806 },
-            { name: "Ghaziabad", lat: 28.6692, lon: 77.4538, population: 1648643 }
+            { name: "Mumbai", lat: 19.0760, lon: 72.8777 },
+            { name: "Delhi", lat: 28.7041, lon: 77.1025 },
+            { name: "Bangalore", lat: 12.9716, lon: 77.5946 },
+            { name: "Hyderabad", lat: 17.3850, lon: 78.4867 },
+            { name: "Chennai", lat: 13.0827, lon: 80.2707 },
+            { name: "Kolkata", lat: 22.5726, lon: 88.3639 },
+            { name: "Pune", lat: 18.5204, lon: 73.8567 },
+            { name: "Ahmedabad", lat: 23.0225, lon: 72.5714 },
+            { name: "Jaipur", lat: 26.9124, lon: 75.7873 },
+            { name: "Surat", lat: 21.1702, lon: 72.8311 },
+            { name: "Lucknow", lat: 26.8467, lon: 80.9462 },
+            { name: "Kanpur", lat: 26.4499, lon: 80.3319 },
+            { name: "Nagpur", lat: 21.1458, lon: 79.0882 },
+            { name: "Indore", lat: 22.7196, lon: 75.8577 },
+            { name: "Thane", lat: 19.2183, lon: 72.9781 },
+            { name: "Bhopal", lat: 23.2599, lon: 77.4126 },
+            { name: "Visakhapatnam", lat: 17.6868, lon: 83.2185 },
+            { name: "Patna", lat: 25.5941, lon: 85.1376 },
+            { name: "Vadodara", lat: 22.3072, lon: 73.1812 },
+            { name: "Ghaziabad", lat: 28.6692, lon: 77.4538 }
         ];
         
         this.routes = [
-            // Major air routes
-            { from: "Mumbai", to: "Delhi", distance: 1154, time: 2.0, transport: "air" },
-            { from: "Mumbai", to: "Bangalore", distance: 983, time: 1.8, transport: "air" },
-            { from: "Mumbai", to: "Hyderabad", distance: 707, time: 1.5, transport: "air" },
-            { from: "Mumbai", to: "Chennai", distance: 1038, time: 1.9, transport: "air" },
-            { from: "Mumbai", to: "Kolkata", distance: 1654, time: 2.5, transport: "air" },
-            { from: "Delhi", to: "Bangalore", distance: 1740, time: 2.8, transport: "air" },
-            { from: "Delhi", to: "Hyderabad", distance: 1215, time: 2.2, transport: "air" },
-            { from: "Delhi", to: "Chennai", distance: 1760, time: 2.9, transport: "air" },
-            { from: "Delhi", to: "Kolkata", distance: 1304, time: 2.1, transport: "air" },
-            { from: "Delhi", to: "Jaipur", distance: 268, time: 0.8, transport: "road" },
-            { from: "Delhi", to: "Lucknow", distance: 497, time: 1.2, transport: "road" },
-            { from: "Delhi", to: "Kanpur", distance: 432, time: 1.0, transport: "road" },
-            { from: "Delhi", to: "Bhopal", distance: 588, time: 1.4, transport: "road" },
-            { from: "Delhi", to: "Patna", distance: 847, time: 1.8, transport: "road" },
-            { from: "Delhi", to: "Ghaziabad", distance: 19, time: 0.5, transport: "road" },
-            { from: "Bangalore", to: "Hyderabad", distance: 569, time: 1.2, transport: "air" },
-            { from: "Bangalore", to: "Chennai", distance: 347, time: 0.8, transport: "road" },
-            { from: "Bangalore", to: "Pune", distance: 619, time: 1.3, transport: "air" },
-            { from: "Hyderabad", to: "Chennai", distance: 626, time: 1.1, transport: "air" },
-            { from: "Hyderabad", to: "Visakhapatnam", distance: 671, time: 1.3, transport: "air" },
-            { from: "Chennai", to: "Kolkata", distance: 1359, time: 2.3, transport: "air" },
-            { from: "Chennai", to: "Visakhapatnam", distance: 800, time: 1.5, transport: "air" },
-            { from: "Kolkata", to: "Patna", distance: 532, time: 1.1, transport: "road" },
-            { from: "Kolkata", to: "Visakhapatnam", distance: 883, time: 1.7, transport: "air" },
-            { from: "Pune", to: "Mumbai", distance: 148, time: 0.5, transport: "road" },
-            { from: "Pune", to: "Ahmedabad", distance: 655, time: 1.4, transport: "air" },
-            { from: "Ahmedabad", to: "Mumbai", distance: 523, time: 1.1, transport: "air" },
-            { from: "Ahmedabad", to: "Surat", distance: 263, time: 0.6, transport: "road" },
-            { from: "Ahmedabad", to: "Vadodara", distance: 110, time: 0.3, transport: "road" },
-            { from: "Jaipur", to: "Ahmedabad", distance: 650, time: 1.3, transport: "road" },
-            { from: "Jaipur", to: "Bhopal", distance: 598, time: 1.2, transport: "road" },
-            { from: "Surat", to: "Mumbai", distance: 260, time: 0.6, transport: "road" },
-            { from: "Surat", to: "Vadodara", distance: 153, time: 0.4, transport: "road" },
-            { from: "Lucknow", to: "Kanpur", distance: 79, time: 0.3, transport: "road" },
-            { from: "Lucknow", to: "Patna", distance: 350, time: 0.8, transport: "road" },
-            { from: "Kanpur", to: "Bhopal", distance: 156, time: 0.4, transport: "road" },
-            { from: "Nagpur", to: "Bhopal", distance: 245, time: 0.6, transport: "road" },
-            { from: "Nagpur", to: "Hyderabad", distance: 500, time: 1.0, transport: "road" },
-            { from: "Indore", to: "Bhopal", distance: 186, time: 0.4, transport: "road" },
-            { from: "Indore", to: "Mumbai", distance: 585, time: 1.2, transport: "road" },
-            { from: "Thane", to: "Mumbai", distance: 25, time: 0.1, transport: "road" },
-            { from: "Thane", to: "Pune", distance: 123, time: 0.3, transport: "road" },
-            { from: "Bhopal", to: "Indore", distance: 186, time: 0.4, transport: "road" },
-            { from: "Bhopal", to: "Nagpur", distance: 245, time: 0.6, transport: "road" },
-            { from: "Visakhapatnam", to: "Hyderabad", distance: 671, time: 1.3, transport: "air" },
-            { from: "Visakhapatnam", to: "Chennai", distance: 800, time: 1.5, transport: "air" },
-            { from: "Patna", to: "Kolkata", distance: 532, time: 1.1, transport: "road" },
-            { from: "Patna", to: "Lucknow", distance: 350, time: 0.8, transport: "road" },
-            { from: "Vadodara", to: "Ahmedabad", distance: 110, time: 0.3, transport: "road" },
-            { from: "Vadodara", to: "Surat", distance: 153, time: 0.4, transport: "road" },
-            { from: "Ghaziabad", to: "Delhi", distance: 19, time: 0.5, transport: "road" },
-            { from: "Ghaziabad", to: "Lucknow", distance: 478, time: 1.1, transport: "road" }
+            // City connections (simplified without transport modes)
+            { from: "Mumbai", to: "Delhi", distance: 1154, time: 2.0 },
+            { from: "Mumbai", to: "Bangalore", distance: 983, time: 1.8 },
+            { from: "Mumbai", to: "Hyderabad", distance: 707, time: 1.5 },
+            { from: "Mumbai", to: "Chennai", distance: 1038, time: 1.9 },
+            { from: "Mumbai", to: "Kolkata", distance: 1654, time: 2.5 },
+            { from: "Delhi", to: "Bangalore", distance: 1740, time: 2.8 },
+            { from: "Delhi", to: "Hyderabad", distance: 1215, time: 2.2 },
+            { from: "Delhi", to: "Chennai", distance: 1760, time: 2.9 },
+            { from: "Delhi", to: "Kolkata", distance: 1304, time: 2.1 },
+            { from: "Delhi", to: "Jaipur", distance: 268, time: 0.8 },
+            { from: "Delhi", to: "Lucknow", distance: 497, time: 1.2 },
+            { from: "Delhi", to: "Kanpur", distance: 432, time: 1.0 },
+            { from: "Delhi", to: "Bhopal", distance: 588, time: 1.4 },
+            { from: "Delhi", to: "Patna", distance: 847, time: 1.8 },
+            { from: "Delhi", to: "Ghaziabad", distance: 19, time: 0.5 },
+            { from: "Bangalore", to: "Hyderabad", distance: 569, time: 1.2 },
+            { from: "Bangalore", to: "Chennai", distance: 347, time: 0.8 },
+            { from: "Bangalore", to: "Pune", distance: 619, time: 1.3 },
+            { from: "Hyderabad", to: "Chennai", distance: 626, time: 1.1 },
+            { from: "Hyderabad", to: "Visakhapatnam", distance: 671, time: 1.3 },
+            { from: "Chennai", to: "Kolkata", distance: 1359, time: 2.3 },
+            { from: "Chennai", to: "Visakhapatnam", distance: 800, time: 1.5 },
+            { from: "Kolkata", to: "Patna", distance: 532, time: 1.1 },
+            { from: "Kolkata", to: "Visakhapatnam", distance: 883, time: 1.7 },
+            { from: "Pune", to: "Mumbai", distance: 148, time: 0.5 },
+            { from: "Pune", to: "Ahmedabad", distance: 655, time: 1.4 },
+            { from: "Ahmedabad", to: "Mumbai", distance: 523, time: 1.1 },
+            { from: "Ahmedabad", to: "Surat", distance: 263, time: 0.6 },
+            { from: "Ahmedabad", to: "Vadodara", distance: 110, time: 0.3 },
+            { from: "Jaipur", to: "Ahmedabad", distance: 650, time: 1.3 },
+            { from: "Jaipur", to: "Bhopal", distance: 598, time: 1.2 },
+            { from: "Surat", to: "Mumbai", distance: 260, time: 0.6 },
+            { from: "Surat", to: "Vadodara", distance: 153, time: 0.4 },
+            { from: "Lucknow", to: "Kanpur", distance: 79, time: 0.3 },
+            { from: "Lucknow", to: "Patna", distance: 350, time: 0.8 },
+            { from: "Kanpur", to: "Bhopal", distance: 156, time: 0.4 },
+            { from: "Nagpur", to: "Bhopal", distance: 245, time: 0.6 },
+            { from: "Nagpur", to: "Hyderabad", distance: 500, time: 1.0 },
+            { from: "Indore", to: "Bhopal", distance: 186, time: 0.4 },
+            { from: "Indore", to: "Mumbai", distance: 585, time: 1.2 },
+            { from: "Thane", to: "Mumbai", distance: 25, time: 0.1 },
+            { from: "Thane", to: "Pune", distance: 123, time: 0.3 },
+            { from: "Bhopal", to: "Indore", distance: 186, time: 0.4 },
+            { from: "Bhopal", to: "Nagpur", distance: 245, time: 0.6 },
+            { from: "Visakhapatnam", to: "Hyderabad", distance: 671, time: 1.3 },
+            { from: "Visakhapatnam", to: "Chennai", distance: 800, time: 1.5 },
+            { from: "Patna", to: "Kolkata", distance: 532, time: 1.1 },
+            { from: "Patna", to: "Lucknow", distance: 350, time: 0.8 },
+            { from: "Vadodara", to: "Ahmedabad", distance: 110, time: 0.3 },
+            { from: "Vadodara", to: "Surat", distance: 153, time: 0.4 },
+            { from: "Ghaziabad", to: "Delhi", distance: 19, time: 0.5 },
+            { from: "Ghaziabad", to: "Lucknow", distance: 478, time: 1.1 }
         ];
         
         this.currentPath = null;
@@ -295,11 +295,8 @@ class PathfindingVisualizer {
             // Update progress
             this.showPersonProgress(stepIndex);
             
-            // Show transport mode
-            this.showTransportMode(route.transport);
-            
-            // Calculate movement duration based on transport mode
-            const moveDuration = route.transport === 'air' ? 300 : 600; // Air is faster
+            // Calculate movement duration (simplified without transport modes)
+            const moveDuration = 500; // Standard movement speed
             
             // Move person to next city
             setTimeout(() => {
@@ -314,16 +311,7 @@ class PathfindingVisualizer {
         }
     }
     
-    // Show transport mode information
-    showTransportMode(transport) {
-        const progressContainer = document.getElementById('personProgress');
-        if (progressContainer) {
-            const transportIcon = transport === 'air' ? '✈️' : '🚗';
-            const currentText = document.getElementById('personLocation').textContent;
-            const cityName = currentText.split(' ')[0];
-            document.getElementById('personLocation').textContent = `${cityName} → ${transportIcon} ${transport}`;
-        }
-    }
+
     
     calculateMapBounds() {
         const lats = this.cities.map(c => c.lat);
@@ -561,8 +549,7 @@ class PathfindingVisualizer {
                 from: route.to,
                 to: route.from,
                 distance: route.distance,
-                time: route.time,
-                transport: route.transport
+                time: route.time
             };
         });
         
@@ -722,7 +709,7 @@ class PathfindingVisualizer {
                     <div class="step-details">
                         <strong>${from}</strong> → <strong>${to}</strong>
                         <div class="route-info">
-                            ${route.distance} km • ${route.time} hours • ${route.transport}
+                            ${route.distance} km • ${route.time} hours
                         </div>
                     </div>
                 </div>

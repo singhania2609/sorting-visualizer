@@ -17,10 +17,9 @@ struct City {
     std::string name;
     double latitude;
     double longitude;
-    int population;
     
-    City(const std::string& n, double lat, double lon, int pop) 
-        : name(n), latitude(lat), longitude(lon), population(pop) {}
+    City(const std::string& n, double lat, double lon) 
+        : name(n), latitude(lat), longitude(lon) {}
 };
 
 struct Route {
@@ -28,10 +27,9 @@ struct Route {
     std::string to;
     double distance; // in kilometers
     double time;     // in hours
-    std::string transport; // "air" or "road"
     
-    Route(const std::string& f, const std::string& t, double dist, double t_time, const std::string& trans)
-        : from(f), to(t), distance(dist), time(t_time), transport(trans) {}
+    Route(const std::string& f, const std::string& t, double dist, double t_time)
+        : from(f), to(t), distance(dist), time(t_time) {}
 };
 
 struct PathResult {
