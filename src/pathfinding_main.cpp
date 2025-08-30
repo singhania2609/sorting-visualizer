@@ -63,7 +63,6 @@ int main() {
     std::cout << "Average Path Length Analysis:\n";
     std::cout << "=============================\n";
     pathfinder.calculateAveragePathLength();
-    std::endl;
     
     // Export results
     std::cout << "Exporting results to 'pathfinding_results.txt'...\n";

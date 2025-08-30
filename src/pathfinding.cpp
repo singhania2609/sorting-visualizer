@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <stack>
 
 PathfindingVisualizer::PathfindingVisualizer() {
     // Initialize with Indian cities
@@ -145,10 +146,10 @@ PathResult PathfindingVisualizer::dijkstra(const std::string& source, const std:
     // Reconstruct path
     result.path = reconstructPath(previous, source, destination);
     if (!result.path.empty()) {
-        result.totalDistance = distances[destination];
-        result.totalTime = calculateTotalTime(result.path);
-        result.routeDetails = getRouteDetails(result.path);
-    }
+    result.totalDistance = calculateTotalDistance(result.path);
+    result.totalTime = calculateTotalTime(result.path);
+    result.routeDetails = getRouteDetails(result.path);
+}
     
     return result;
 }

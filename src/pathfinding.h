@@ -59,9 +59,9 @@ public:
     void addRoute(const Route& route);
     
     // Pathfinding algorithms
-            PathResult dijkstra(const std::string& source, const std::string& destination);
-        PathResult breadthFirstSearch(const std::string& source, const std::string& destination);
-        PathResult depthFirstSearch(const std::string& source, const std::string& destination);
+    PathResult dijkstra(const std::string& source, const std::string& destination);
+    PathResult breadthFirstSearch(const std::string& source, const std::string& destination);
+    PathResult depthFirstSearch(const std::string& source, const std::string& destination);
     
     // Algorithm comparison
     std::vector<PathResult> compareAlgorithms(const std::string& source, const std::string& destination);
@@ -71,6 +71,11 @@ public:
     std::vector<std::string> getNeighbors(const std::string& city);
     bool cityExists(const std::string& cityName);
     void printPath(const PathResult& result);
+    
+    // Path calculation functions
+    double calculateTotalDistance(const std::vector<std::string>& path);
+    double calculateTotalTime(const std::vector<std::string>& path);
+    std::vector<Route> getRouteDetails(const std::vector<std::string>& path);
     
     // Data export/import
     void exportResults(const std::vector<PathResult>& results, const std::string& filename);
