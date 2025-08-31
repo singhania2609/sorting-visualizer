@@ -91,7 +91,7 @@ class PathfindingVisualizer {
     initializeEventListeners() {
         document.getElementById('findPathBtn').addEventListener('click', () => this.findPath());
         document.getElementById('compareBtn').addEventListener('click', () => this.compareAlgorithms());
-        document.getElementById('resetPathBtn').addEventListener('click', () => this.reset());
+        document.getElementById('resetBtn').addEventListener('click', () => this.reset());
         document.getElementById('exportBtn').addEventListener('click', () => this.exportResults());
     }
     
@@ -328,7 +328,7 @@ class PathfindingVisualizer {
     findPath() {
         const source = document.getElementById('sourceCity').value;
         const destination = document.getElementById('destCity').value;
-        const algorithm = document.getElementById('pathfindingAlgorithm').value;
+        const algorithm = document.getElementById('algorithm').value;
         
         if (!source || !destination) {
             alert('Please select both source and destination cities.');
@@ -354,6 +354,12 @@ class PathfindingVisualizer {
                     break;
                 case 'dfs':
                     result = this.dfs(source, destination);
+                    break;
+                case 'bellman-ford':
+                    result = this.bellmanFord(source, destination);
+                    break;
+                case 'floyd-warshall':
+                    result = this.floydWarshall(source, destination);
                     break;
                 default:
                     result = this.dijkstra(source, destination);
@@ -504,6 +510,136 @@ class PathfindingVisualizer {
             totalTime: 0,
             routeDetails: [],
             algorithm: 'dfs'
+        };
+    }
+    
+    // Bellman-Ford Algorithm
+    bellmanFord(source, destination) {
+        const distances = {};
+        const previous = {};
+        const graph = this.buildGraph();
+        
+        // Initialize distances
+        this.cities.forEach(city => {
+            distances[city.name] = Infinity;
+        });
+        distances[source] = 0;
+        
+        // Relax edges V-1 times
+        for (let i = 0; i < this.cities.length - 1; i++) {
+            for (const route of this.routes) {
+                const u = route.from;
+                const v = route.to;
+                const w = route.distance;
+                
+                if (distances[u] !== Infinity && distances[u] + w < distances[v]) {
+                    distances[v] = distances[u] + w;
+                    previous[v] = u;
+                }
+                
+                // Check reverse edge (since our graph is undirected)
+                if (distances[v] !== Infinity && distances[v] + w < distances[u]) {
+                    distances[u] = distances[v] + w;
+                    previous[u] = v;
+                }
+            }
+        }
+        
+        // Check for negative weight cycles (though our graph doesn't have negative weights)
+        for (const route of this.routes) {
+            const u = route.from;
+            const v = route.to;
+            const w = route.distance;
+            
+            if (distances[u] !== Infinity && distances[u] + w < distances[v]) {
+                console.warn("Negative weight cycle detected");
+                return null;
+            }
+        }
+        
+        return this.reconstructPath(source, destination, previous, distances, 'bellman-ford');
+    }
+    
+    // Floyd-Warshall Algorithm
+    floydWarshall(source, destination) {
+        const n = this.cities.length;
+        const cityNames = this.cities.map(city => city.name);
+        const cityIndex = {};
+        cityNames.forEach((name, index) => {
+            cityIndex[name] = index;
+        });
+        
+        // Initialize distance matrix
+        const dist = Array(n).fill().map(() => Array(n).fill(Infinity));
+        const next = Array(n).fill().map(() => Array(n).fill(null));
+        
+        // Initialize diagonal and direct edges
+        for (let i = 0; i < n; i++) {
+            dist[i][i] = 0;
+        }
+        
+        // Add direct edges
+        this.routes.forEach(route => {
+            const u = cityIndex[route.from];
+            const v = cityIndex[route.to];
+            const w = route.distance;
+            
+            if (u !== undefined && v !== undefined) {
+                dist[u][v] = w;
+                dist[v][u] = w; // Undirected graph
+                next[u][v] = v;
+                next[v][u] = u;
+            }
+        });
+        
+        // Floyd-Warshall algorithm
+        for (let k = 0; k < n; k++) {
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                        next[i][j] = next[i][k];
+                    }
+                }
+            }
+        }
+        
+        // Reconstruct path
+        const sourceIndex = cityIndex[source];
+        const destIndex = cityIndex[destination];
+        
+        if (dist[sourceIndex][destIndex] === Infinity) {
+            return null;
+        }
+        
+        const path = [];
+        let current = sourceIndex;
+        path.push(cityNames[current]);
+        
+        while (current !== destIndex) {
+            current = next[current][destIndex];
+            if (current === null) break;
+            path.push(cityNames[current]);
+        }
+        
+        // Calculate total time
+        let totalTime = 0;
+        for (let i = 0; i < path.length - 1; i++) {
+            const route = this.routes.find(r => 
+                (r.from === path[i] && r.to === path[i + 1]) ||
+                (r.from === path[i + 1] && r.to === path[i])
+            );
+            if (route) {
+                totalTime += route.time;
+            }
+        }
+        
+        return {
+            path: path,
+            totalDistance: dist[sourceIndex][destIndex],
+            totalTime: totalTime,
+            routeDetails: this.getRouteDetails(path),
+            algorithm: 'floyd-warshall'
         };
     }
     
@@ -741,7 +877,7 @@ class PathfindingVisualizer {
     }
     
     simulateAlgorithmComparison(source, destination) {
-        const algorithms = ['dijkstra', 'bfs', 'dfs'];
+        const algorithms = ['dijkstra', 'bfs', 'dfs', 'bellman-ford', 'floyd-warshall'];
         const results = [];
         
         algorithms.forEach(algo => {
@@ -755,6 +891,12 @@ class PathfindingVisualizer {
                     break;
                 case 'dfs':
                     result = this.dfs(source, destination);
+                    break;
+                case 'bellman-ford':
+                    result = this.bellmanFord(source, destination);
+                    break;
+                case 'floyd-warshall':
+                    result = this.floydWarshall(source, destination);
                     break;
             }
             if (result) {
@@ -834,7 +976,7 @@ class PathfindingVisualizer {
         // Reset form
         document.getElementById('sourceCity').value = '';
         document.getElementById('destCity').value = '';
-        document.getElementById('pathfindingAlgorithm').value = 'dijkstra';
+        document.getElementById('algorithm').value = 'dijkstra';
         
         // Reset display
         document.getElementById('totalDistance').textContent = '0 km';
